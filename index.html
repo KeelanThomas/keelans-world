@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101827" />
+  <title>Keelan's World</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <button id="homeButton" class="brand" aria-label="Go home">Keelan's World</button>
+    <div class="topbar-actions">
+      <label class="language-label" for="languageSelect" id="languageLabel">Language</label>
+      <select id="languageSelect" aria-label="Choose language"></select>
+    </div>
+  </header>
+
+  <main>
+    <section id="homeScreen" class="screen active">
+      <div class="hero">
+        <p class="eyebrow" id="welcomeText">Welcome to</p>
+        <h1>Keelan's World</h1>
+        <p id="chooseActivityText">Choose an activity</p>
+      </div>
+
+      <div class="activity-grid">
+        <button class="activity-card profile-card" data-open="profiles">
+          <span class="activity-icon">📺</span>
+          <span id="profileStudioText">Profile Studio</span>
+          <small id="profileStudioSubtext">Create, rename, recolor, and rearrange profiles.</small>
+        </button>
+
+        <button class="activity-card alphabet-card" data-open="alphabet">
+          <span class="activity-icon">🔤</span>
+          <span id="alphabetExplorerText">Alphabet Explorer</span>
+          <small id="alphabetExplorerSubtext">Explore letters in different languages.</small>
+        </button>
+
+        <button class="activity-card surprise-card" id="surpriseButton">
+          <span class="activity-icon">🎲</span>
+          <span id="surpriseMeText">Surprise Me!</span>
+          <small id="surpriseMeSubtext">Change the whole look instantly.</small>
+        </button>
+      </div>
+    </section>
+
+    <section id="profilesScreen" class="screen">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" id="profileStudioEyebrow">Profile Studio</p>
+          <h2 id="whosWatchingText">Who's Watching?</h2>
+        </div>
+        <button id="addProfileButton" class="primary-button">＋ <span id="newProfileText">New Profile</span></button>
+      </div>
+      <div id="profilesGrid" class="profiles-grid"></div>
+    </section>
+
+    <section id="alphabetScreen" class="screen">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" id="alphabetEyebrow">Alphabet Explorer</p>
+          <h2 id="pickLetterText">Pick a letter</h2>
+        </div>
+      </div>
+      <div id="alphabetGrid" class="alphabet-grid"></div>
+      <div id="letterDisplay" class="letter-display hidden">
+        <button id="closeLetterButton" class="close-button" aria-label="Close">×</button>
+        <div id="bigLetter" class="big-letter">A</div>
+        <div id="letterLanguageName" class="letter-language-name">English</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
+    <div class="modal-card">
+      <button id="closeModalButton" class="close-button" aria-label="Close">×</button>
+      <h2 id="editProfileTitle">Edit Profile</h2>
+
+      <label for="profileName" id="nameLabel">Name</label>
+      <input id="profileName" maxlength="30" autocomplete="off" />
+
+      <fieldset>
+        <legend id="avatarLabel">Avatar</legend>
+        <div id="avatarPicker" class="avatar-picker"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend id="colorLabel">Color</legend>
+        <div id="colorPicker" class="color-picker"></div>
+      </fieldset>
+
+      <div class="modal-actions">
+        <button id="deleteProfileButton" class="danger-button">🗑️ <span id="deleteText">Delete</span></button>
+        <button id="saveProfileButton" class="primary-button">💾 <span id="saveText">Save</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
