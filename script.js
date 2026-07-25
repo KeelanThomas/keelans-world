@@ -3,6 +3,22 @@ const STORAGE_KEY = "keelans-world-v1";
 const avatars = ["😀","😎","🤩","🦖","🐶","🐱","🦁","🐼","🐸","🦊","🐙","🦄","🚀","🌈","⭐","🍕","🎮","⚽","🚗","🎵","🔤","🌎","👾","🤖"];
 const colors = ["#2563eb","#7c3aed","#db2777","#e11d48","#ea580c","#ca8a04","#16a34a","#0d9488","#0891b2","#4f46e5","#9333ea","#475569"];
 
+const BLOCK_COLUMNS = window.innerWidth <= 650 ? 12 : 16;
+const BLOCK_ROWS = 12;
+const BLOCK_TOTAL = BLOCK_COLUMNS * BLOCK_ROWS;
+const blockTypes = [
+  { id: "grass", emoji: "🌿", color: "#68a83b", label: "Grass" },
+  { id: "dirt", emoji: "🟫", color: "#8b5a2b", label: "Dirt" },
+  { id: "stone", emoji: "🪨", color: "#7b8490", label: "Stone" },
+  { id: "wood", emoji: "🪵", color: "#9a632c", label: "Wood" },
+  { id: "water", emoji: "💧", color: "#2f80ed", label: "Water" },
+  { id: "sand", emoji: "🏖️", color: "#e5c672", label: "Sand" },
+  { id: "lava", emoji: "🔥", color: "#f25c27", label: "Lava" },
+  { id: "snow", emoji: "❄️", color: "#eef7ff", label: "Snow" },
+  { id: "rainbow", emoji: "🌈", color: "linear-gradient(135deg,#ff595e,#ffca3a,#8ac926,#1982c4,#6a4c93)", label: "Rainbow" },
+  { id: "glow", emoji: "✨", color: "#ffe66d", label: "Glow" }
+];
+
 const translations = {
   en: {
     languageName: "English", language: "Language", welcome: "Welcome to", chooseActivity: "Choose an activity",
@@ -11,7 +27,12 @@ const translations = {
     surpriseMe: "Surprise Me!", surpriseMeSub: "Change the whole look instantly.",
     whosWatching: "Who's Watching?", newProfile: "New Profile", editProfile: "Edit Profile",
     name: "Name", avatar: "Avatar", color: "Color", save: "Save", delete: "Delete",
-    pickLetter: "Pick a letter", saved: "Saved!", created: "Profile created!", deleted: "Profile deleted!",
+    pickLetter: "Pick a letter", saved: "Saved!", created: "Profile created!", deleted: "Profile deleted!",    blockWorld: "Keelan\'s Block World", blockWorldSub: "Build, erase, save, and create anything.",
+    buildAnything: "Build Anything", randomBuild: "Random Build", clearWorld: "Clear World", worldName: "World Name",
+    nightMode: "Night Mode", dayMode: "Day Mode", chooseBlock: "Choose a Block", eraser: "Eraser",
+    blockHelp: "Choose a block, then click or tap the grid to place it.", autoSave: "Your world saves automatically on this device.",
+    worldCleared: "World cleared!", randomCreated: "Random build created!",
+
     surprise: "Surprise!"
   },
   es: {
@@ -21,7 +42,12 @@ const translations = {
     surpriseMe: "¡Sorpréndeme!", surpriseMeSub: "Cambia todo el diseño al instante.",
     whosWatching: "¿Quién está mirando?", newProfile: "Nuevo perfil", editProfile: "Editar perfil",
     name: "Nombre", avatar: "Avatar", color: "Color", save: "Guardar", delete: "Eliminar",
-    pickLetter: "Elige una letra", saved: "¡Guardado!", created: "¡Perfil creado!", deleted: "¡Perfil eliminado!",
+    pickLetter: "Elige una letra", saved: "¡Guardado!", created: "¡Perfil creado!", deleted: "¡Perfil eliminado!",    blockWorld: "Mundo de bloques de Keelan", blockWorldSub: "Construye, borra, guarda y crea.",
+    buildAnything: "Construye lo que quieras", randomBuild: "Construcción aleatoria", clearWorld: "Borrar mundo", worldName: "Nombre del mundo",
+    nightMode: "Modo nocturno", dayMode: "Modo diurno", chooseBlock: "Elige un bloque", eraser: "Borrador",
+    blockHelp: "Elige un bloque y toca la cuadrícula para colocarlo.", autoSave: "Tu mundo se guarda automáticamente en este dispositivo.",
+    worldCleared: "¡Mundo borrado!", randomCreated: "¡Construcción aleatoria creada!",
+
     surprise: "¡Sorpresa!"
   },
   fr: {
@@ -31,7 +57,12 @@ const translations = {
     surpriseMe: "Surprends-moi !", surpriseMeSub: "Change tout le style instantanément.",
     whosWatching: "Qui regarde ?", newProfile: "Nouveau profil", editProfile: "Modifier le profil",
     name: "Nom", avatar: "Avatar", color: "Couleur", save: "Enregistrer", delete: "Supprimer",
-    pickLetter: "Choisis une lettre", saved: "Enregistré !", created: "Profil créé !", deleted: "Profil supprimé !",
+    pickLetter: "Choisis une lettre", saved: "Enregistré !", created: "Profil créé !", deleted: "Profil supprimé !",    blockWorld: "Le monde de blocs de Keelan", blockWorldSub: "Construis, efface, sauvegarde et crée.",
+    buildAnything: "Construis ce que tu veux", randomBuild: "Construction aléatoire", clearWorld: "Effacer le monde", worldName: "Nom du monde",
+    nightMode: "Mode nuit", dayMode: "Mode jour", chooseBlock: "Choisis un bloc", eraser: "Gomme",
+    blockHelp: "Choisis un bloc, puis touche la grille pour le placer.", autoSave: "Ton monde est sauvegardé automatiquement sur cet appareil.",
+    worldCleared: "Monde effacé !", randomCreated: "Construction aléatoire créée !",
+
     surprise: "Surprise !"
   },
   de: {
@@ -41,7 +72,12 @@ const translations = {
     surpriseMe: "Überrasch mich!", surpriseMeSub: "Ändere sofort das ganze Aussehen.",
     whosWatching: "Wer schaut?", newProfile: "Neues Profil", editProfile: "Profil bearbeiten",
     name: "Name", avatar: "Avatar", color: "Farbe", save: "Speichern", delete: "Löschen",
-    pickLetter: "Wähle einen Buchstaben", saved: "Gespeichert!", created: "Profil erstellt!", deleted: "Profil gelöscht!",
+    pickLetter: "Wähle einen Buchstaben", saved: "Gespeichert!", created: "Profil erstellt!", deleted: "Profil gelöscht!",    blockWorld: "Keelans Blockwelt", blockWorldSub: "Baue, lösche, speichere und erschaffe.",
+    buildAnything: "Baue alles", randomBuild: "Zufallsbau", clearWorld: "Welt löschen", worldName: "Weltname",
+    nightMode: "Nachtmodus", dayMode: "Tagmodus", chooseBlock: "Block auswählen", eraser: "Radierer",
+    blockHelp: "Wähle einen Block und tippe auf das Raster.", autoSave: "Deine Welt wird automatisch auf diesem Gerät gespeichert.",
+    worldCleared: "Welt gelöscht!", randomCreated: "Zufallsbau erstellt!",
+
     surprise: "Überraschung!"
   },
   it: {
@@ -51,7 +87,12 @@ const translations = {
     surpriseMe: "Sorprendimi!", surpriseMeSub: "Cambia subito tutto lo stile.",
     whosWatching: "Chi sta guardando?", newProfile: "Nuovo profilo", editProfile: "Modifica profilo",
     name: "Nome", avatar: "Avatar", color: "Colore", save: "Salva", delete: "Elimina",
-    pickLetter: "Scegli una lettera", saved: "Salvato!", created: "Profilo creato!", deleted: "Profilo eliminato!",
+    pickLetter: "Scegli una lettera", saved: "Salvato!", created: "Profilo creato!", deleted: "Profilo eliminato!",    blockWorld: "Il mondo a blocchi di Keelan", blockWorldSub: "Costruisci, cancella, salva e crea.",
+    buildAnything: "Costruisci qualsiasi cosa", randomBuild: "Costruzione casuale", clearWorld: "Cancella mondo", worldName: "Nome del mondo",
+    nightMode: "Modalità notte", dayMode: "Modalità giorno", chooseBlock: "Scegli un blocco", eraser: "Gomma",
+    blockHelp: "Scegli un blocco e tocca la griglia per posizionarlo.", autoSave: "Il tuo mondo viene salvato automaticamente su questo dispositivo.",
+    worldCleared: "Mondo cancellato!", randomCreated: "Costruzione casuale creata!",
+
     surprise: "Sorpresa!"
   },
   pt: {
@@ -61,7 +102,12 @@ const translations = {
     surpriseMe: "Surpreenda-me!", surpriseMeSub: "Mude todo o visual instantaneamente.",
     whosWatching: "Quem está assistindo?", newProfile: "Novo perfil", editProfile: "Editar perfil",
     name: "Nome", avatar: "Avatar", color: "Cor", save: "Salvar", delete: "Excluir",
-    pickLetter: "Escolha uma letra", saved: "Salvo!", created: "Perfil criado!", deleted: "Perfil excluído!",
+    pickLetter: "Escolha uma letra", saved: "Salvo!", created: "Perfil criado!", deleted: "Perfil excluído!",    blockWorld: "Mundo de blocos do Keelan", blockWorldSub: "Construa, apague, salve e crie.",
+    buildAnything: "Construa qualquer coisa", randomBuild: "Construção aleatória", clearWorld: "Limpar mundo", worldName: "Nome do mundo",
+    nightMode: "Modo noturno", dayMode: "Modo diurno", chooseBlock: "Escolha um bloco", eraser: "Borracha",
+    blockHelp: "Escolha um bloco e toque na grade para colocá-lo.", autoSave: "Seu mundo é salvo automaticamente neste dispositivo.",
+    worldCleared: "Mundo limpo!", randomCreated: "Construção aleatória criada!",
+
     surprise: "Surpresa!"
   },
   ja: {
@@ -71,7 +117,12 @@ const translations = {
     surpriseMe: "おまかせ！", surpriseMeSub: "デザインをすぐに変えます。",
     whosWatching: "だれが見ていますか？", newProfile: "新しいプロフィール", editProfile: "プロフィールを編集",
     name: "名前", avatar: "アバター", color: "色", save: "保存", delete: "削除",
-    pickLetter: "文字を選んでください", saved: "保存しました！", created: "プロフィールを作りました！", deleted: "プロフィールを削除しました！",
+    pickLetter: "文字を選んでください", saved: "保存しました！", created: "プロフィールを作りました！", deleted: "プロフィールを削除しました！",    blockWorld: "キーランのブロックワールド", blockWorldSub: "ブロックを置いて、消して、保存して、自由に作ろう。",
+    buildAnything: "なんでも作ろう", randomBuild: "ランダム建築", clearWorld: "ワールドを消す", worldName: "ワールド名",
+    nightMode: "夜モード", dayMode: "昼モード", chooseBlock: "ブロックを選ぶ", eraser: "消しゴム",
+    blockHelp: "ブロックを選んで、マスをタップして置こう。", autoSave: "この端末に自動で保存されます。",
+    worldCleared: "ワールドを消しました！", randomCreated: "ランダム建築を作りました！",
+
     surprise: "サプライズ！"
   },
   ko: {
@@ -81,7 +132,12 @@ const translations = {
     surpriseMe: "깜짝 변경!", surpriseMeSub: "전체 디자인을 바로 바꿉니다.",
     whosWatching: "누가 보고 있나요?", newProfile: "새 프로필", editProfile: "프로필 편집",
     name: "이름", avatar: "아바타", color: "색상", save: "저장", delete: "삭제",
-    pickLetter: "글자를 선택하세요", saved: "저장했어요!", created: "프로필을 만들었어요!", deleted: "프로필을 삭제했어요!",
+    pickLetter: "글자를 선택하세요", saved: "저장했어요!", created: "프로필을 만들었어요!", deleted: "프로필을 삭제했어요!",    blockWorld: "킬런의 블록 월드", blockWorldSub: "블록을 놓고, 지우고, 저장하고, 만들어 보세요.",
+    buildAnything: "무엇이든 만들기", randomBuild: "무작위 만들기", clearWorld: "월드 지우기", worldName: "월드 이름",
+    nightMode: "밤 모드", dayMode: "낮 모드", chooseBlock: "블록 선택", eraser: "지우개",
+    blockHelp: "블록을 선택한 다음 격자를 눌러 놓으세요.", autoSave: "이 기기에 월드가 자동으로 저장됩니다.",
+    worldCleared: "월드를 지웠어요!", randomCreated: "무작위 월드를 만들었어요!",
+
     surprise: "짜잔!"
   }
 };
@@ -104,20 +160,42 @@ const defaultState = {
     { id: crypto.randomUUID(), name: "Keelan", avatar: "😀", color: "#2563eb" },
     { id: crypto.randomUUID(), name: "Dinosaur", avatar: "🦖", color: "#16a34a" },
     { id: crypto.randomUUID(), name: "Rocket", avatar: "🚀", color: "#7c3aed" }
-  ]
+  ],
+  blockWorld: {
+    name: "Keelan's World",
+    night: false,
+    cells: Array(BLOCK_TOTAL).fill(null)
+  }
 };
 
 let state = loadState();
 let editingId = null;
 let draftAvatar = avatars[0];
 let draftColor = colors[0];
+let selectedBlock = "grass";
+let eraserActive = false;
 
 const $ = (id) => document.getElementById(id);
 
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return saved && Array.isArray(saved.profiles) ? saved : structuredClone(defaultState);
+    if (!saved || !Array.isArray(saved.profiles)) return structuredClone(defaultState);
+
+    const merged = {
+      ...structuredClone(defaultState),
+      ...saved,
+      blockWorld: {
+        ...structuredClone(defaultState.blockWorld),
+        ...(saved.blockWorld ?? {})
+      }
+    };
+
+    if (!Array.isArray(merged.blockWorld.cells) || merged.blockWorld.cells.length !== BLOCK_TOTAL) {
+      merged.blockWorld.cells = Array(BLOCK_TOTAL).fill(null);
+    }
+
+    return merged;
   } catch {
     return structuredClone(defaultState);
   }
@@ -160,6 +238,18 @@ function applyTranslations() {
   $("colorLabel").textContent = t("color");
   $("deleteText").textContent = t("delete");
   $("saveText").textContent = t("save");
+  $("blockWorldText").textContent = t("blockWorld");
+  $("blockWorldSubtext").textContent = t("blockWorldSub");
+  $("blockWorldEyebrow").textContent = t("blockWorld");
+  $("buildAnythingText").textContent = t("buildAnything");
+  $("randomBuildText").textContent = t("randomBuild");
+  $("clearWorldText").textContent = t("clearWorld");
+  $("worldNameLabel").textContent = t("worldName");
+  $("chooseBlockText").textContent = t("chooseBlock");
+  $("eraserText").textContent = t("eraser");
+  $("blockHelpText").textContent = t("blockHelp");
+  $("autoSaveText").textContent = "💾 " + t("autoSave");
+  updateDayNightButton();
   renderAlphabet();
 }
 
@@ -297,6 +387,99 @@ function surpriseMe() {
   showToast(t("surprise"));
 }
 
+
+function renderBlockPalette() {
+  $("blockPalette").innerHTML = "";
+
+  blockTypes.forEach(block => {
+    const button = document.createElement("button");
+    button.className = "block-option";
+    if (!eraserActive && selectedBlock === block.id) button.classList.add("selected");
+    button.textContent = block.emoji;
+    button.style.background = block.color;
+    button.title = block.label;
+    button.setAttribute("aria-label", block.label);
+
+    button.addEventListener("click", () => {
+      selectedBlock = block.id;
+      eraserActive = false;
+      renderBlockPalette();
+      $("eraserButton").classList.remove("selected");
+    });
+
+    $("blockPalette").appendChild(button);
+  });
+}
+
+function renderBlockGrid() {
+  $("blockGrid").innerHTML = "";
+
+  state.blockWorld.cells.forEach((blockId, index) => {
+    const cell = document.createElement("button");
+    cell.className = "block-cell";
+
+    if (blockId) {
+      const block = blockTypes.find(item => item.id === blockId);
+      if (block) {
+        cell.classList.add("filled");
+        cell.style.background = block.color;
+        cell.title = block.label;
+      }
+    }
+
+    cell.addEventListener("click", () => {
+      state.blockWorld.cells[index] = eraserActive ? null : selectedBlock;
+      saveState();
+      renderBlockGrid();
+    });
+
+    $("blockGrid").appendChild(cell);
+  });
+}
+
+function clearBlockWorld() {
+  state.blockWorld.cells = Array(BLOCK_TOTAL).fill(null);
+  saveState();
+  renderBlockGrid();
+  showToast(t("worldCleared"));
+}
+
+function createRandomBuild() {
+  state.blockWorld.cells = state.blockWorld.cells.map((_, index) => {
+    const row = Math.floor(index / BLOCK_COLUMNS);
+    const placementChance = row > BLOCK_ROWS - 4 ? .86 : .18;
+    if (Math.random() >= placementChance) return null;
+    return blockTypes[Math.floor(Math.random() * blockTypes.length)].id;
+  });
+
+  saveState();
+  renderBlockGrid();
+  showToast(t("randomCreated"));
+}
+
+function updateDayNightButton() {
+  const isNight = state.blockWorld.night;
+  $("blockWorldCanvas").classList.toggle("night", isNight);
+  $("blockWorldCanvas").classList.toggle("day", !isNight);
+  $("sunMoonIcon").textContent = isNight ? "🌙" : "☀️";
+  $("dayNightButton").innerHTML = isNight
+    ? `☀️ <span id="dayModeText">${t("dayMode")}</span>`
+    : `🌙 <span id="nightModeText">${t("nightMode")}</span>`;
+}
+
+function toggleDayNight() {
+  state.blockWorld.night = !state.blockWorld.night;
+  saveState();
+  updateDayNightButton();
+}
+
+function initializeBlockWorld() {
+  $("worldNameInput").value = state.blockWorld.name;
+  renderBlockPalette();
+  renderBlockGrid();
+  updateDayNightButton();
+}
+
 function showToast(message) {
   $("toast").textContent = message;
   $("toast").classList.remove("hidden");
@@ -325,6 +508,18 @@ $("saveProfileButton").addEventListener("click", saveProfile);
 $("deleteProfileButton").addEventListener("click", deleteProfile);
 $("surpriseButton").addEventListener("click", surpriseMe);
 $("closeLetterButton").addEventListener("click", () => $("letterDisplay").classList.add("hidden"));
+$("eraserButton").addEventListener("click", () => {
+  eraserActive = true;
+  renderBlockPalette();
+  $("eraserButton").classList.add("selected");
+});
+$("clearWorldButton").addEventListener("click", clearBlockWorld);
+$("randomBuildButton").addEventListener("click", createRandomBuild);
+$("dayNightButton").addEventListener("click", toggleDayNight);
+$("worldNameInput").addEventListener("input", event => {
+  state.blockWorld.name = event.target.value;
+  saveState();
+});
 
 $("languageSelect").addEventListener("change", (event) => {
   state.language = event.target.value;
@@ -348,3 +543,4 @@ buildPickers();
 applyTranslations();
 renderProfiles();
 renderAlphabet();
+initializeBlockWorld();

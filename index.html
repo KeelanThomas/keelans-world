@@ -42,6 +42,12 @@
           <span id="surpriseMeText">Surprise Me!</span>
           <small id="surpriseMeSubtext">Change the whole look instantly.</small>
         </button>
+
+        <button class="activity-card block-card" data-open="blocks">
+          <span class="activity-icon">🧱</span>
+          <span id="blockWorldText">Keelan's Block World</span>
+          <small id="blockWorldSubtext">Build, erase, save, and create anything.</small>
+        </button>
       </div>
     </section>
 
@@ -69,6 +75,43 @@
         <div id="bigLetter" class="big-letter">A</div>
         <div id="letterLanguageName" class="letter-language-name">English</div>
       </div>
+    </section>
+
+    <section id="blocksScreen" class="screen">
+      <div class="section-heading block-heading">
+        <div>
+          <p class="eyebrow" id="blockWorldEyebrow">Keelan's Block World</p>
+          <h2 id="buildAnythingText">Build Anything</h2>
+        </div>
+        <div class="block-actions">
+          <button id="randomBuildButton" class="primary-button">🎲 <span id="randomBuildText">Random Build</span></button>
+          <button id="clearWorldButton" class="danger-button">🧹 <span id="clearWorldText">Clear World</span></button>
+        </div>
+      </div>
+
+      <div class="world-controls">
+        <label for="worldNameInput" id="worldNameLabel">World Name</label>
+        <input id="worldNameInput" maxlength="40" value="Keelan's World" />
+        <button id="dayNightButton" class="primary-button day-night-button">🌙 <span id="nightModeText">Night Mode</span></button>
+      </div>
+
+      <div class="block-builder">
+        <aside class="block-palette-panel">
+          <h3 id="chooseBlockText">Choose a Block</h3>
+          <div id="blockPalette" class="block-palette"></div>
+          <button id="eraserButton" class="eraser-button">🧽 <span id="eraserText">Eraser</span></button>
+          <p id="blockHelpText">Choose a block, then click or tap the grid to place it.</p>
+        </aside>
+
+        <div id="blockWorldCanvas" class="block-world-canvas day">
+          <span id="sunMoonIcon" class="sun-moon-icon">☀️</span>
+          <span class="world-cloud cloud-one">☁️</span>
+          <span class="world-cloud cloud-two">☁️</span>
+          <div id="blockGrid" class="block-grid" aria-label="Block building grid"></div>
+        </div>
+      </div>
+
+      <p class="auto-save-note" id="autoSaveText">💾 Your world saves automatically on this device.</p>
     </section>
   </main>
 
