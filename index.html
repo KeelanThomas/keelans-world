@@ -48,6 +48,12 @@
           <span id="blockWorldText">Keelan's Block World</span>
           <small id="blockWorldSubtext">Build, erase, save, and create anything.</small>
         </button>
+
+        <button class="activity-card arcade-card" data-open="arcade">
+          <span class="activity-icon">🎮</span>
+          <span id="arcadeText">Keelan's Game Room</span>
+          <small id="arcadeSubtext">Pop, match, play, and have fun!</small>
+        </button>
       </div>
     </section>
 
@@ -112,6 +118,51 @@
       </div>
 
       <p class="auto-save-note" id="autoSaveText">💾 Your world saves automatically on this device.</p>
+    </section>
+
+    <section id="arcadeScreen" class="screen">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" id="arcadeEyebrow">Keelan's Game Room</p>
+          <h2 id="arcadeGreeting">Hi, Keelan! Ready to play?</h2>
+        </div>
+      </div>
+      <div class="game-card-grid">
+        <button class="game-card balloon-game-card" data-open="balloonGame">
+          <span class="game-icon">🎈</span><strong id="balloonPopText">Balloon Pop</strong>
+          <small id="balloonPopSubtext">Pop as many balloons as you can!</small><span class="play-pill">▶ PLAY</span>
+        </button>
+        <button class="game-card bubble-game-card" data-open="bubbleGame">
+          <span class="game-icon">🫧</span><strong id="bubblePopText">Bubble Pop</strong>
+          <small id="bubblePopSubtext">Pop floating bubbles for fun!</small><span class="play-pill">▶ PLAY</span>
+        </button>
+        <button class="game-card color-game-card" data-open="colorGame">
+          <span class="game-icon">🌈</span><strong id="colorMatchText">Color Match</strong>
+          <small id="colorMatchSubtext">Find the correct color!</small><span class="play-pill">▶ PLAY</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="balloonGameScreen" class="screen game-screen">
+      <div class="game-toolbar"><button class="back-to-arcade primary-button">← Game Room</button><h2>🎈 <span id="balloonTitle">Balloon Pop</span></h2><div class="score-box">⭐ <span id="balloonScore">0</span></div></div>
+      <div id="balloonPlayArea" class="pop-play-area balloon-area" aria-label="Balloon Pop game"></div>
+      <p class="game-help" id="balloonHelp">Tap the balloons before they float away!</p>
+    </section>
+
+    <section id="bubbleGameScreen" class="screen game-screen">
+      <div class="game-toolbar"><button class="back-to-arcade primary-button">← Game Room</button><h2>🫧 <span id="bubbleTitle">Bubble Pop</span></h2><div class="score-box">⭐ <span id="bubbleScore">0</span></div></div>
+      <div id="bubblePlayArea" class="pop-play-area bubble-area" aria-label="Bubble Pop game"></div>
+      <p class="game-help" id="bubbleHelp">Tap the bubbles and watch them sparkle!</p>
+    </section>
+
+    <section id="colorGameScreen" class="screen game-screen">
+      <div class="game-toolbar"><button class="back-to-arcade primary-button">← Game Room</button><h2>🌈 <span id="colorTitle">Color Match</span></h2><div class="score-box">⭐ <span id="colorScore">0</span></div></div>
+      <div class="color-match-panel">
+        <p id="findColorPrompt">Find the color...</p>
+        <div id="targetColorName" class="target-color-name">BLUE</div>
+        <div id="colorChoices" class="color-choices"></div>
+        <div id="colorMessage" class="color-message" aria-live="polite">Pick a color!</div>
+      </div>
     </section>
   </main>
 

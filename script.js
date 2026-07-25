@@ -32,7 +32,10 @@ const translations = {
     nightMode: "Night Mode", dayMode: "Day Mode", chooseBlock: "Choose a Block", eraser: "Eraser",
     blockHelp: "Choose a block, then click or tap the grid to place it.", autoSave: "Your world saves automatically on this device.",
     worldCleared: "World cleared!", randomCreated: "Random build created!",
-
+    arcade: "Keelan's Game Room", arcadeSub: "Pop, match, play, and have fun!", readyToPlay: "Ready to play?",
+    balloonPop: "Balloon Pop", balloonPopSub: "Pop as many balloons as you can!",
+    bubblePop: "Bubble Pop", bubblePopSub: "Pop floating bubbles for fun!",
+    colorMatch: "Color Match", colorMatchSub: "Find the correct color!",
     surprise: "Surprise!"
   },
   es: {
@@ -174,6 +177,11 @@ let draftAvatar = avatars[0];
 let draftColor = colors[0];
 let selectedBlock = "grass";
 let eraserActive = false;
+let balloonScore = 0;
+let bubbleScore = 0;
+let colorScore = 0;
+let popSpawnTimer = null;
+let currentColorAnswer = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -249,13 +257,29 @@ function applyTranslations() {
   $("eraserText").textContent = t("eraser");
   $("blockHelpText").textContent = t("blockHelp");
   $("autoSaveText").textContent = "💾 " + t("autoSave");
+  $("arcadeText").textContent = t("arcade");
+  $("arcadeSubtext").textContent = t("arcadeSub");
+  $("arcadeEyebrow").textContent = t("arcade");
+  updateArcadeGreeting();
+  $("balloonPopText").textContent = t("balloonPop");
+  $("balloonPopSubtext").textContent = t("balloonPopSub");
+  $("bubblePopText").textContent = t("bubblePop");
+  $("bubblePopSubtext").textContent = t("bubblePopSub");
+  $("colorMatchText").textContent = t("colorMatch");
+  $("colorMatchSubtext").textContent = t("colorMatchSub");
   updateDayNightButton();
   renderAlphabet();
 }
 
 function showScreen(name) {
+  stopPopGames();
   document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
   $(name + "Screen").classList.add("active");
+  if (name === "arcade") updateArcadeGreeting();
+  if (name === "balloonGame") startPopGame("balloon");
+  if (name === "bubbleGame") startPopGame("bubble");
+  if (name === "colorGame") startColorMatch();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function renderProfiles() {
@@ -480,6 +504,140 @@ function initializeBlockWorld() {
   updateDayNightButton();
 }
 
+function activePlayerName() {
+  return state.profiles?.[0]?.name?.trim() || "Keelan";
+}
+
+function updateArcadeGreeting() {
+  $("arcadeGreeting").textContent = `Hi, ${activePlayerName()}! ${t("readyToPlay")}`;
+}
+
+function playTone(frequency = 520, duration = .08) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.frequency.value = frequency;
+    oscillator.type = "sine";
+    gain.gain.setValueAtTime(.08, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001, context.currentTime + duration);
+    oscillator.connect(gain).connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + duration);
+    oscillator.addEventListener("ended", () => context.close());
+  } catch {}
+}
+
+function stopPopGames() {
+  clearInterval(popSpawnTimer);
+  popSpawnTimer = null;
+  ["balloonPlayArea", "bubblePlayArea"].forEach(id => {
+    const area = $(id);
+    if (area) area.innerHTML = "";
+  });
+}
+
+function startPopGame(type) {
+  const isBalloon = type === "balloon";
+  if (isBalloon) {
+    balloonScore = 0;
+    $("balloonScore").textContent = balloonScore;
+  } else {
+    bubbleScore = 0;
+    $("bubbleScore").textContent = bubbleScore;
+  }
+  const spawn = () => spawnPopItem(type);
+  for (let i = 0; i < 5; i++) setTimeout(spawn, i * 260);
+  popSpawnTimer = setInterval(spawn, isBalloon ? 720 : 620);
+}
+
+function spawnPopItem(type) {
+  const isBalloon = type === "balloon";
+  const area = $(isBalloon ? "balloonPlayArea" : "bubblePlayArea");
+  if (!area || !area.closest(".screen.active")) return;
+  const item = document.createElement("button");
+  item.className = `pop-item ${isBalloon ? "pop-balloon" : "pop-bubble"}`;
+  const size = isBalloon ? 54 + Math.random() * 48 : 40 + Math.random() * 70;
+  item.style.width = `${size}px`;
+  item.style.height = `${size}px`;
+  item.style.left = `${Math.random() * Math.max(10, area.clientWidth - size)}px`;
+  item.style.bottom = `-${size + 10}px`;
+  item.style.animationDuration = `${isBalloon ? 5.2 + Math.random() * 2.8 : 6.2 + Math.random() * 3.2}s`;
+  if (isBalloon) {
+    const balloons = ["🎈","🎈","🎈","🎈","🎈"];
+    item.textContent = balloons[Math.floor(Math.random() * balloons.length)];
+    item.style.fontSize = `${size}px`;
+    item.style.filter = `hue-rotate(${Math.floor(Math.random()*330)}deg) drop-shadow(0 8px 6px rgba(0,0,0,.18))`;
+  }
+  item.setAttribute("aria-label", isBalloon ? "Pop balloon" : "Pop bubble");
+  item.addEventListener("click", event => {
+    event.stopPropagation();
+    const rect = area.getBoundingClientRect();
+    const burst = document.createElement("span");
+    burst.className = "pop-burst";
+    burst.textContent = isBalloon ? "✨" : "💫";
+    burst.style.left = `${event.clientX - rect.left - 18}px`;
+    burst.style.top = `${event.clientY - rect.top - 18}px`;
+    area.appendChild(burst);
+    setTimeout(() => burst.remove(), 500);
+    if (isBalloon) $("balloonScore").textContent = ++balloonScore;
+    else $("bubbleScore").textContent = ++bubbleScore;
+    playTone(isBalloon ? 620 : 760, .09);
+    item.remove();
+  }, { once: true });
+  item.addEventListener("animationend", () => item.remove());
+  area.appendChild(item);
+}
+
+const matchColors = [
+  { name:"RED", value:"#ef4444" }, { name:"BLUE", value:"#3b82f6" },
+  { name:"GREEN", value:"#22c55e" }, { name:"YELLOW", value:"#facc15" },
+  { name:"PURPLE", value:"#a855f7" }, { name:"ORANGE", value:"#f97316" },
+  { name:"PINK", value:"#ec4899" }, { name:"BLACK", value:"#111827" }
+];
+
+function startColorMatch() {
+  colorScore = 0;
+  $("colorScore").textContent = colorScore;
+  nextColorRound();
+}
+
+function nextColorRound() {
+  const choices = [...matchColors].sort(() => Math.random() - .5).slice(0, 4);
+  currentColorAnswer = choices[Math.floor(Math.random() * choices.length)];
+  $("targetColorName").textContent = currentColorAnswer.name;
+  $("targetColorName").style.color = currentColorAnswer.value;
+  $("colorMessage").textContent = "Pick a color!";
+  $("colorMessage").classList.remove("celebrate");
+  $("colorChoices").innerHTML = "";
+  choices.sort(() => Math.random() - .5).forEach(color => {
+    const button = document.createElement("button");
+    button.className = "color-choice";
+    button.style.background = color.value;
+    button.setAttribute("aria-label", color.name);
+    button.addEventListener("click", () => chooseColor(color, button));
+    $("colorChoices").appendChild(button);
+  });
+}
+
+function chooseColor(color, button) {
+  if (color.name === currentColorAnswer.name) {
+    colorScore += 1;
+    $("colorScore").textContent = colorScore;
+    $("colorMessage").textContent = `🎉 Great job, ${activePlayerName()}!`;
+    $("colorMessage").classList.add("celebrate");
+    playTone(880, .14);
+    [...$("colorChoices").children].forEach(child => child.disabled = true);
+    setTimeout(nextColorRound, 850);
+  } else {
+    $("colorMessage").textContent = "Try again! 😊";
+    button.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:260});
+    playTone(220, .08);
+  }
+}
+
 function showToast(message) {
   $("toast").textContent = message;
   $("toast").classList.remove("hidden");
@@ -502,6 +660,7 @@ document.querySelectorAll("[data-open]").forEach(button => {
 });
 
 $("homeButton").addEventListener("click", () => showScreen("home"));
+document.querySelectorAll(".back-to-arcade").forEach(button => button.addEventListener("click", () => showScreen("arcade")));
 $("addProfileButton").addEventListener("click", () => openProfileModal());
 $("closeModalButton").addEventListener("click", closeProfileModal);
 $("saveProfileButton").addEventListener("click", saveProfile);
