@@ -786,13 +786,38 @@ let buddyMessageIndex = 0;
 function talkToBuddy() {
   buddyMessageIndex = (buddyMessageIndex + 1) % buddyMessages.length;
   const speech = $("buddySpeech");
+  const buddyButton = $("plazaBuddy");
   speech.textContent = buddyMessages[buddyMessageIndex];
   speech.animate(
     [{ transform: "scale(.92)", opacity: .5 }, { transform: "scale(1.06)", opacity: 1 }, { transform: "scale(1)", opacity: 1 }],
     { duration: 360, easing: "ease-out" }
   );
+  buddyButton.classList.remove("is-happy", "is-running", "is-sitting");
+  void buddyButton.offsetWidth;
+  buddyButton.classList.add("is-happy");
+  for (let i = 0; i < 3; i += 1) {
+    const heart = document.createElement("span");
+    heart.className = "buddy-heart";
+    heart.textContent = i === 1 ? "💙" : "❤️";
+    heart.style.left = `${42 + i * 10}%`;
+    heart.style.top = `${22 + i * 5}%`;
+    heart.style.animationDelay = `${i * 90}ms`;
+    buddyButton.appendChild(heart);
+    window.setTimeout(() => heart.remove(), 1700);
+  }
+  window.setTimeout(() => buddyButton.classList.remove("is-happy"), 1800);
   playTone(520 + buddyMessageIndex * 45, .08);
 }
+
+function cycleBuddyMovement() {
+  const buddyButton = $("plazaBuddy");
+  if (!buddyButton || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  buddyButton.classList.remove("is-running", "is-sitting");
+  const mode = Math.random() > .48 ? "is-running" : "is-sitting";
+  buddyButton.classList.add(mode);
+  window.setTimeout(() => buddyButton.classList.remove(mode), mode === "is-running" ? 2600 : 2200);
+}
+window.setInterval(cycleBuddyMovement, 7000);
 
 document.querySelectorAll("[data-open]").forEach(button => {
   button.addEventListener("click", () => showScreen(button.dataset.open));
