@@ -17,44 +17,127 @@
   </header>
 
   <main>
-    <section id="homeScreen" class="screen active">
-      <div class="hero">
+    <section id="homeScreen" class="screen active plaza-screen village-screen">
+      <div class="plaza-sky" aria-hidden="true">
+        <span class="plaza-sun">☀️</span>
+        <span class="plaza-cloud cloud-a">☁️</span>
+        <span class="plaza-cloud cloud-b">☁️</span>
+        <span class="plaza-cloud cloud-c">☁️</span>
+        <span class="plaza-bird bird-a">🐦</span>
+        <span class="plaza-bird bird-b">🐦</span>
+      </div>
+
+      <div class="plaza-title-card village-title-card">
         <p class="eyebrow" id="welcomeText">Welcome to</p>
-        <h1>Keelan's World</h1>
-        <p id="chooseActivityText">Choose an activity</p>
+        <h1>Keelan's Village</h1>
+        <p id="chooseActivityText">Choose a place to explore</p>
       </div>
 
-      <div class="activity-grid">
-        <button class="activity-card profile-card" data-open="profiles">
-          <span class="activity-icon">📺</span>
-          <span id="profileStudioText">Profile Studio</span>
-          <small id="profileStudioSubtext">Create, rename, recolor, and rearrange profiles.</small>
+      <div class="plaza-world village-world" aria-label="Keelan's Village">
+        <div class="village-hills" aria-hidden="true"></div>
+        <div class="plaza-decor trees-left" aria-hidden="true">🌳 🌲</div>
+        <div class="plaza-decor trees-right" aria-hidden="true">🌲 🌳</div>
+        <span class="butterfly butterfly-a" aria-hidden="true">🦋</span>
+        <span class="butterfly butterfly-b" aria-hidden="true">🦋</span>
+        <span class="floating-balloon balloon-a" aria-hidden="true">🎈</span>
+        <span class="floating-balloon balloon-b" aria-hidden="true">🎈</span>
+
+        <div class="village-path path-main" aria-hidden="true"></div>
+        <div class="village-path path-left" aria-hidden="true"></div>
+        <div class="village-path path-right" aria-hidden="true"></div>
+        <div class="plaza-fountain village-fountain" aria-hidden="true"><span>⛲</span></div>
+
+        <button class="village-building melody-house" data-open="melody" aria-label="Enter Melody Makers">
+          <span class="house-roof"><span class="roof-note">🎵</span></span>
+          <span class="house-body">
+            <span class="house-sign">Melody Makers</span>
+            <span class="house-window left-window"><span>🎹</span></span>
+            <span class="house-window right-window"><span>🥁</span></span>
+            <span class="house-door"><span>♪</span></span>
+            <span class="flower-box">🌼🌷🌼</span>
+          </span>
+          <span class="building-caption"><b>Melody Makers</b><small>Play music with Buddy</small></span>
         </button>
 
-        <button class="activity-card alphabet-card" data-open="alphabet">
-          <span class="activity-icon">🔤</span>
-          <span id="alphabetExplorerText">Alphabet Explorer</span>
-          <small id="alphabetExplorerSubtext">Explore letters in different languages.</small>
+        <button class="village-building alphabet-school" data-open="alphabet" aria-label="Enter Alphabet Academy">
+          <span class="school-bell">🔔</span>
+          <span class="house-roof school-roof"><span class="roof-note">ABC</span></span>
+          <span class="house-body">
+            <span class="house-sign" id="alphabetExplorerText">Alphabet Academy</span>
+            <span class="house-window left-window"><span>📚</span></span>
+            <span class="house-window right-window"><span>🍎</span></span>
+            <span class="house-door"><span>A</span></span>
+            <span class="school-flag">🚩</span>
+          </span>
+          <span class="building-caption"><b>Alphabet Academy</b><small id="alphabetExplorerSubtext">Explore letters</small></span>
         </button>
 
-        <button class="activity-card surprise-card" id="surpriseButton">
-          <span class="activity-icon">🎲</span>
-          <span id="surpriseMeText">Surprise Me!</span>
-          <small id="surpriseMeSubtext">Change the whole look instantly.</small>
+        <button class="village-building builder-workshop" data-open="blocks" aria-label="Enter Builder's Workshop">
+          <span class="house-roof workshop-roof"><span class="roof-note">🔨</span></span>
+          <span class="house-body">
+            <span class="house-sign" id="blockWorldText">Builder's Workshop</span>
+            <span class="house-window left-window"><span>🧱</span></span>
+            <span class="house-window right-window"><span>📐</span></span>
+            <span class="house-door"><span>⚙️</span></span>
+            <span class="block-stack">🟦🟨🟥</span>
+          </span>
+          <span class="building-caption"><b>Builder's Workshop</b><small id="blockWorldSubtext">Build anything</small></span>
         </button>
 
-        <button class="activity-card block-card" data-open="blocks">
-          <span class="activity-icon">🧱</span>
-          <span id="blockWorldText">Keelan's Block World</span>
-          <small id="blockWorldSubtext">Build, erase, save, and create anything.</small>
+        <button class="village-building arcade-shop" data-open="arcade" aria-label="Enter Keelan's Game Arcade">
+          <span class="arcade-marquee">★ GAME ARCADE ★</span>
+          <span class="house-roof arcade-roof"><span class="roof-note">🎮</span></span>
+          <span class="house-body">
+            <span class="house-sign" id="arcadeText">Game Arcade</span>
+            <span class="house-window left-window neon-window"><span>👾</span></span>
+            <span class="house-window right-window neon-window"><span>🎈</span></span>
+            <span class="house-door"><span>▶</span></span>
+          </span>
+          <span class="building-caption"><b>Game Arcade</b><small id="arcadeSubtext">Pop, match, and play</small></span>
         </button>
 
-        <button class="activity-card arcade-card" data-open="arcade">
-          <span class="activity-icon">🎮</span>
-          <span id="arcadeText">Keelan's Game Room</span>
-          <small id="arcadeSubtext">Pop, match, play, and have fun!</small>
+        <button class="village-building profile-cottage" data-open="profiles" aria-label="Enter Profile Studio">
+          <span class="house-roof cottage-roof"><span class="roof-note">📷</span></span>
+          <span class="house-body">
+            <span class="house-sign" id="profileStudioText">Profile Studio</span>
+            <span class="house-window left-window"><span>🖼️</span></span>
+            <span class="house-window right-window"><span>⭐</span></span>
+            <span class="house-door"><span>☺</span></span>
+            <span class="flower-box">🌸🌼🌸</span>
+          </span>
+          <span class="building-caption"><b>Profile Studio</b><small id="profileStudioSubtext">Choose your explorer</small></span>
         </button>
+
+        <div class="village-building discovery-lab-house coming-soon" aria-label="Discovery Lab opening soon">
+          <span class="lab-dome">🔭</span>
+          <span class="house-roof lab-roof"><span class="roof-note">🔬</span></span>
+          <span class="house-body">
+            <span class="house-sign">Discovery Lab</span>
+            <span class="house-window left-window"><span>🧪</span></span>
+            <span class="house-window right-window"><span>🤖</span></span>
+            <span class="house-door locked-door"><span>🔒</span></span>
+            <span class="construction-fence">🚧 OPENING SOON 🚧</span>
+          </span>
+          <span class="building-caption"><b>Discovery Lab</b><small>Opening Soon</small></span>
+        </div>
+
+        <button id="surpriseButton" class="surprise-kiosk village-kiosk" aria-label="Surprise Me">
+          <span>🎲</span><b id="surpriseMeText">Surprise Me!</b><small id="surpriseMeSubtext">Change the village colors</small>
+        </button>
+
+        <button id="plazaBuddy" class="plaza-buddy village-buddy" aria-label="Talk to Buddy">
+          <span class="buddy-character">🐶</span>
+          <span id="buddySpeech" class="buddy-speech">Hi, Keelan! Where should we explore?</span>
+        </button>
+
+        <div class="village-details" aria-hidden="true">
+          <span class="bench bench-one">🪑</span><span class="bench bench-two">🪑</span>
+          <span class="flowers flowers-one">🌷🌼🌸</span><span class="flowers flowers-two">🌻🌷🌼</span>
+          <span class="mailbox">📬</span><span class="lamp-post">💡</span>
+        </div>
       </div>
+
+      <p class="plaza-tip">✨ Tap a building to visit. Tap Buddy when you need an idea!</p>
     </section>
 
     <section id="profilesScreen" class="screen">
@@ -164,6 +247,65 @@
         <div id="colorMessage" class="color-message" aria-live="polite">Pick a color!</div>
       </div>
     </section>
+
+    <section id="melodyScreen" class="screen melody-screen">
+      <div id="melodyEntrance" class="melody-entrance" aria-hidden="true">
+        <div class="entrance-notes">♪ ♫ ♪</div>
+        <div class="melody-building">
+          <div class="building-sign">🎵 MELODY MAKERS 🎵</div>
+          <div class="building-windows"><span>🎤</span><span>🎹</span></div>
+          <div class="building-doors"><span></span><span></span></div>
+        </div>
+        <div class="entrance-buddy">🐶</div>
+      </div>
+
+      <div class="melody-lobby">
+        <div class="melody-sparkles" aria-hidden="true">♪ ✨ ♫ ⭐ ♪</div>
+        <p class="eyebrow">Expansion Pack 1</p>
+        <h2>🎵 Melody Makers</h2>
+        <p class="melody-welcome">Buddy says, “Welcome! Let’s make some music!”</p>
+        <div class="buddy-stage"><span id="lobbyBuddy" class="buddy-character">🐶</span><span class="buddy-note">🎶</span></div>
+        <div class="music-room-grid">
+          <button class="music-room-card open-room" data-open="instrument">
+            <span>🥁</span><strong>Instrument Studio</strong><small>Piano and drums are open!</small>
+          </button>
+          <button class="music-room-card coming-soon" disabled><span>🎧</span><strong>DJ Booth</strong><small>🚧 Opening Soon</small></button>
+          <button class="music-room-card coming-soon" disabled><span>💃</span><strong>Dance Floor</strong><small>🚧 Opening Soon</small></button>
+          <button class="music-room-card coming-soon" disabled><span>🎤</span><strong>Karaoke Stage</strong><small>🚧 Opening Soon</small></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="instrumentScreen" class="screen instrument-screen">
+      <div class="game-toolbar music-toolbar">
+        <button id="backToMelody" class="primary-button">← Melody Makers</button>
+        <h2>🥁 Instrument Studio</h2>
+        <div id="musicStickerCount" class="score-box">⭐ 0/3</div>
+      </div>
+      <p class="music-rule">There are no wrong notes here. Tap, play, and explore!</p>
+      <div class="studio-layout">
+        <div class="instrument-panel piano-panel">
+          <h3>🎹 Rainbow Piano</h3>
+          <div id="pianoKeys" class="piano-keys" aria-label="Playable piano"></div>
+        </div>
+        <div class="buddy-music-zone">
+          <div id="studioNotes" class="studio-notes" aria-hidden="true"></div>
+          <div id="studioBuddy" class="studio-buddy">🐶</div>
+          <p id="buddyMusicMessage">Buddy is ready to dance!</p>
+        </div>
+        <div class="instrument-panel drum-panel">
+          <h3>🥁 Drum Kit</h3>
+          <div class="drum-kit">
+            <button class="drum-pad drum-kick" data-drum="kick">BOOM</button>
+            <button class="drum-pad drum-snare" data-drum="snare">BAP</button>
+            <button class="drum-pad drum-hat" data-drum="hat">TSH</button>
+            <button class="drum-pad drum-tom" data-drum="tom">TOM</button>
+          </div>
+        </div>
+      </div>
+      <div id="stickerShelf" class="sticker-shelf" aria-live="polite"></div>
+    </section>
+
   </main>
 
   <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">

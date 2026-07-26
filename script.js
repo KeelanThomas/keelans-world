@@ -168,6 +168,9 @@ const defaultState = {
     name: "Keelan's World",
     night: false,
     cells: Array(BLOCK_TOTAL).fill(null)
+  },
+  melodyMakers: {
+    discoveries: []
   }
 };
 
@@ -196,6 +199,10 @@ function loadState() {
       blockWorld: {
         ...structuredClone(defaultState.blockWorld),
         ...(saved.blockWorld ?? {})
+      },
+      melodyMakers: {
+        ...structuredClone(defaultState.melodyMakers),
+        ...(saved.melodyMakers ?? {})
       }
     };
 
@@ -276,6 +283,8 @@ function showScreen(name) {
   document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
   $(name + "Screen").classList.add("active");
   if (name === "arcade") updateArcadeGreeting();
+  if (name === "melody") playMelodyEntrance();
+  if (name === "instrument") renderMusicStickers();
   if (name === "balloonGame") startPopGame("balloon");
   if (name === "bubbleGame") startPopGame("bubble");
   if (name === "colorGame") startColorMatch();
@@ -638,6 +647,113 @@ function chooseColor(color, button) {
   }
 }
 
+
+// Melody Makers Expansion Pack 1
+const pianoNotes = [
+  { label: "C", frequency: 261.63, color: "#ef4444" },
+  { label: "D", frequency: 293.66, color: "#f97316" },
+  { label: "E", frequency: 329.63, color: "#facc15" },
+  { label: "F", frequency: 349.23, color: "#22c55e" },
+  { label: "G", frequency: 392.00, color: "#3b82f6" },
+  { label: "A", frequency: 440.00, color: "#6366f1" },
+  { label: "B", frequency: 493.88, color: "#a855f7" },
+  { label: "C", frequency: 523.25, color: "#ec4899" }
+];
+
+const musicStickers = [
+  { id: "piano", emoji: "🎹", name: "Piano Player" },
+  { id: "drums", emoji: "🥁", name: "First Beat" },
+  { id: "both", emoji: "⭐", name: "Melody Maker" }
+];
+
+function playMelodyEntrance() {
+  const entrance = $("melodyEntrance");
+  if (!entrance) return;
+  entrance.classList.remove("finished", "opening");
+  void entrance.offsetWidth;
+  entrance.classList.add("opening");
+  clearTimeout(playMelodyEntrance.timer);
+  playMelodyEntrance.timer = setTimeout(() => entrance.classList.add("finished"), 1900);
+}
+
+function initializePiano() {
+  const piano = $("pianoKeys");
+  if (!piano) return;
+  piano.innerHTML = "";
+  pianoNotes.forEach(note => {
+    const button = document.createElement("button");
+    button.className = "piano-key";
+    button.style.background = note.color;
+    button.textContent = note.label;
+    button.setAttribute("aria-label", `Play ${note.label}`);
+    button.addEventListener("click", () => {
+      playTone(note.frequency, .28);
+      animateMusicPlay(button, "piano", "🎵 Piano sounds wonderful!");
+    });
+    piano.appendChild(button);
+  });
+}
+
+function playDrum(kind, button) {
+  const sounds = {
+    kick: [110, .18],
+    snare: [210, .11],
+    hat: [850, .055],
+    tom: [165, .16]
+  };
+  const [frequency, duration] = sounds[kind] ?? sounds.tom;
+  playTone(frequency, duration);
+  animateMusicPlay(button, "drums", "🥁 Buddy loves that beat!");
+}
+
+function animateMusicPlay(button, discovery, message) {
+  button.classList.add("playing");
+  setTimeout(() => button.classList.remove("playing"), 150);
+  const buddy = $("studioBuddy");
+  buddy.classList.remove("dancing");
+  void buddy.offsetWidth;
+  buddy.classList.add("dancing");
+  $("buddyMusicMessage").textContent = message;
+  createFloatingNote();
+  unlockMusicDiscovery(discovery);
+}
+
+function createFloatingNote() {
+  const layer = $("studioNotes");
+  const note = document.createElement("span");
+  note.className = "floating-note";
+  note.textContent = ["♪", "♫", "🎵", "✨"][Math.floor(Math.random() * 4)];
+  note.style.setProperty("--x", `${-90 + Math.random() * 180}px`);
+  note.style.left = `${25 + Math.random() * 50}%`;
+  layer.appendChild(note);
+  setTimeout(() => note.remove(), 1200);
+}
+
+function unlockMusicDiscovery(id) {
+  const discoveries = state.melodyMakers.discoveries;
+  if (!discoveries.includes(id)) {
+    discoveries.push(id);
+    showToast(id === "piano" ? "🎹 Piano Player sticker unlocked!" : "🥁 First Beat sticker unlocked!");
+  }
+  if (discoveries.includes("piano") && discoveries.includes("drums") && !discoveries.includes("both")) {
+    discoveries.push("both");
+    setTimeout(() => showToast("⭐ Melody Maker sticker unlocked!"), 600);
+  }
+  saveState();
+  renderMusicStickers();
+}
+
+function renderMusicStickers() {
+  const shelf = $("stickerShelf");
+  if (!shelf) return;
+  const discoveries = state.melodyMakers?.discoveries ?? [];
+  shelf.innerHTML = musicStickers.map(sticker => `
+    <div class="discovery-sticker ${discoveries.includes(sticker.id) ? "" : "locked"}">
+      ${discoveries.includes(sticker.id) ? sticker.emoji : "🔒"} ${sticker.name}
+    </div>`).join("");
+  $("musicStickerCount").textContent = `⭐ ${discoveries.filter(id => musicStickers.some(s => s.id === id)).length}/3`;
+}
+
 function showToast(message) {
   $("toast").textContent = message;
   $("toast").classList.remove("hidden");
@@ -655,11 +771,39 @@ function rgbToHex(rgb) {
   return "#" + parts.slice(0,3).map(n => Number(n).toString(16).padStart(2,"0")).join("");
 }
 
+
+// Adventure Plaza
+const buddyMessages = [
+  "Hi, Keelan! Where should we explore?",
+  "Melody Makers is ready for a song!",
+  "Want to build something amazing?",
+  "The Game Room has balloons to pop!",
+  "Alphabet Academy is full of letters!",
+  "I wonder what will open at the Discovery Lab!"
+];
+let buddyMessageIndex = 0;
+
+function talkToBuddy() {
+  buddyMessageIndex = (buddyMessageIndex + 1) % buddyMessages.length;
+  const speech = $("buddySpeech");
+  speech.textContent = buddyMessages[buddyMessageIndex];
+  speech.animate(
+    [{ transform: "scale(.92)", opacity: .5 }, { transform: "scale(1.06)", opacity: 1 }, { transform: "scale(1)", opacity: 1 }],
+    { duration: 360, easing: "ease-out" }
+  );
+  playTone(520 + buddyMessageIndex * 45, .08);
+}
+
 document.querySelectorAll("[data-open]").forEach(button => {
   button.addEventListener("click", () => showScreen(button.dataset.open));
 });
 
 $("homeButton").addEventListener("click", () => showScreen("home"));
+$("plazaBuddy").addEventListener("click", talkToBuddy);
+$("backToMelody").addEventListener("click", () => showScreen("melody"));
+document.querySelectorAll(".drum-pad").forEach(button => {
+  button.addEventListener("click", () => playDrum(button.dataset.drum, button));
+});
 document.querySelectorAll(".back-to-arcade").forEach(button => button.addEventListener("click", () => showScreen("arcade")));
 $("addProfileButton").addEventListener("click", () => openProfileModal());
 $("closeModalButton").addEventListener("click", closeProfileModal);
@@ -703,3 +847,5 @@ applyTranslations();
 renderProfiles();
 renderAlphabet();
 initializeBlockWorld();
+initializePiano();
+renderMusicStickers();
