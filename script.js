@@ -849,3 +849,114 @@ renderAlphabet();
 initializeBlockWorld();
 initializePiano();
 renderMusicStickers();
+
+// Village Polish Pack 1
+const villageTips = [
+  "Can you find the duck pond?",
+  "Tap the mailbox for a note from Buddy!",
+  "The flowers may be hiding a butterfly.",
+  "Try tapping the fountain!",
+  "A little bird is waiting to sing for you.",
+  "Visit Melody Makers and create a song!",
+  "Every building has something fun to discover."
+];
+
+function getDailyVillageTip() {
+  const now = new Date();
+  const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 86400000);
+  return villageTips[dayNumber % villageTips.length];
+}
+
+function setDailyVillageTip() {
+  const tip = document.getElementById("dailyBuddyTip");
+  if (tip) tip.textContent = getDailyVillageTip();
+}
+
+function createVillageEffect(emoji, source, className) {
+  if (!source) return;
+  const world = document.querySelector(".village-world");
+  if (!world) return;
+  const worldBox = world.getBoundingClientRect();
+  const sourceBox = source.getBoundingClientRect();
+  const effect = document.createElement("span");
+  effect.className = className;
+  effect.textContent = emoji;
+  effect.style.left = `${sourceBox.left - worldBox.left + sourceBox.width / 2}px`;
+  effect.style.top = `${sourceBox.top - worldBox.top + sourceBox.height / 2}px`;
+  world.appendChild(effect);
+  setTimeout(() => effect.remove(), 2400);
+}
+
+const welcomeSign = document.getElementById("welcomeSign");
+if (welcomeSign) welcomeSign.addEventListener("click", () => {
+  const message = `🐶 Buddy's tip: ${getDailyVillageTip()}`;
+  showToast(message);
+  const speech = document.getElementById("buddySpeech");
+  if (speech) speech.textContent = getDailyVillageTip();
+  playTone(660, .1);
+});
+
+const villageMailbox = document.getElementById("villageMailbox");
+if (villageMailbox) villageMailbox.addEventListener("click", () => {
+  const notes = [
+    "You make this village brighter, Keelan!",
+    "Buddy says: Let's explore together!",
+    "A new adventure is always nearby!",
+    "You are an amazing builder and explorer!"
+  ];
+  const note = notes[Math.floor(Math.random() * notes.length)];
+  showToast(`📬 ${note}`);
+  const speech = document.getElementById("buddySpeech");
+  if (speech) speech.textContent = note;
+  villageMailbox.animate([{transform:"rotate(-8deg)"},{transform:"rotate(8deg)"},{transform:"rotate(0)"}],{duration:420});
+  playTone(720, .12);
+});
+
+const villageFountain = document.getElementById("villageFountain");
+if (villageFountain) villageFountain.addEventListener("click", () => {
+  villageFountain.classList.remove("splash");
+  void villageFountain.offsetWidth;
+  villageFountain.classList.add("splash");
+  showToast("⛲ Whoosh! The fountain made a giant splash!");
+  playTone(560, .08);
+  setTimeout(() => playTone(760, .09), 90);
+});
+
+const villagePond = document.getElementById("villagePond");
+if (villagePond) villagePond.addEventListener("click", () => {
+  const sounds = ["Quack, quack!", "The frog says ribbit!", "The ducks are going for a swim!"];
+  showToast(`🦆 ${sounds[Math.floor(Math.random() * sounds.length)]}`);
+  villagePond.animate([{transform:"scale(1)"},{transform:"scale(1.07)"},{transform:"scale(1)"}],{duration:450});
+  playTone(390, .08);
+  setTimeout(() => playTone(320, .08), 110);
+});
+
+const singingBird = document.getElementById("singingBird");
+if (singingBird) singingBird.addEventListener("click", () => {
+  showToast("🐦 Tweet-tweet! You found the singing bird!");
+  [740, 880, 1040].forEach((tone, index) => setTimeout(() => playTone(tone, .08), index * 100));
+  singingBird.animate([{transform:"translateY(0)"},{transform:"translateY(-18px) rotate(8deg)"},{transform:"translateY(0)"}],{duration:500});
+});
+
+const magicTree = document.getElementById("magicTree");
+if (magicTree) magicTree.addEventListener("click", () => {
+  showToast("🍃 A tiny breeze shook the tree!");
+  for (let i = 0; i < 6; i += 1) {
+    setTimeout(() => createVillageEffect(i % 2 ? "🍂" : "🍃", magicTree, "magic-leaf"), i * 90);
+  }
+  playTone(470, .09);
+});
+
+document.querySelectorAll(".secret-flowers").forEach(flowers => {
+  flowers.addEventListener("click", event => {
+    event.stopPropagation();
+    flowers.classList.remove("bloom");
+    void flowers.offsetWidth;
+    flowers.classList.add("bloom");
+    createVillageEffect("🦋", flowers, "secret-butterfly");
+    showToast("🦋 A butterfly was hiding in the flowers!");
+    playTone(820, .08);
+  });
+});
+
+setDailyVillageTip();

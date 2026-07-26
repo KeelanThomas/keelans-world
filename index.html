@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#101827" />
   <title>Keelan's World</title>
-  <link rel="stylesheet" href="style.css?v=village-2-0" />
+  <link rel="stylesheet" href="style.css?v=village-polish-1-1" />
 </head>
 <body>
   <header class="topbar">
@@ -25,6 +25,8 @@
         <span class="plaza-cloud cloud-c">☁️</span>
         <span class="plaza-bird bird-a">🐦</span>
         <span class="plaza-bird bird-b">🐦</span>
+        <span class="village-kite" aria-hidden="true">🪁</span>
+        <span class="hot-air-balloon" aria-hidden="true">🎈</span>
       </div>
 
       <div class="plaza-title-card village-title-card">
@@ -34,6 +36,10 @@
       </div>
 
       <div class="plaza-world village-world" aria-label="Keelan's Village">
+        <button id="welcomeSign" class="welcome-sign" aria-label="Read today's Buddy tip">
+          <span>🌟 Welcome to Keelan's Village 🌟</span>
+          <small id="dailyBuddyTip">Tap the sign for today's Buddy tip!</small>
+        </button>
         <div class="village-hills" aria-hidden="true"></div>
         <div class="plaza-decor trees-left" aria-hidden="true">🌳 🌲</div>
         <div class="plaza-decor trees-right" aria-hidden="true">🌲 🌳</div>
@@ -45,29 +51,33 @@
         <div class="village-path path-main" aria-hidden="true"></div>
         <div class="village-path path-left" aria-hidden="true"></div>
         <div class="village-path path-right" aria-hidden="true"></div>
-        <div class="plaza-fountain village-fountain" aria-hidden="true"><span>⛲</span></div>
+        <button id="villageFountain" class="plaza-fountain village-fountain village-secret" aria-label="Tap the fountain"><span>⛲</span></button>
+        <button id="villagePond" class="village-pond village-secret" aria-label="Visit the duck pond">
+          <span class="pond-water">💧</span><span class="duck duck-one">🦆</span><span class="duck duck-two">🦆</span>
+          <span class="lily lily-one">🪷</span><span class="lily lily-two">🍃</span><span class="pond-frog">🐸</span>
+        </button>
 
         <button class="village-building melody-house" data-open="melody" aria-label="Enter Melody Makers">
-          <span class="house-roof"><span class="roof-note">🎵</span></span>
+          <span class="house-roof"><span class="roof-note">🎵</span><span class="chimney"><i></i><i></i><i></i></span></span>
           <span class="house-body">
             <span class="house-sign">Melody Makers</span>
             <span class="house-window left-window"><span>🎹</span></span>
             <span class="house-window right-window"><span>🥁</span></span>
             <span class="house-door"><span>♪</span></span>
-            <span class="flower-box">🌼🌷🌼</span>
+            <span class="flower-box secret-flowers" role="button" aria-label="Tap the flowers">🌼🌷🌼</span><span class="porch-prop">🎸</span>
           </span>
           <span class="building-caption"><b>Melody Makers</b><small>Play music with Buddy</small></span>
         </button>
 
         <button class="village-building alphabet-school" data-open="alphabet" aria-label="Enter Alphabet Academy">
-          <span class="school-bell">🔔</span>
+          <span class="school-bell">🔔</span><span class="apple-tree">🌳<i>🍎</i><i>🍎</i></span>
           <span class="house-roof school-roof"><span class="roof-note">ABC</span></span>
           <span class="house-body">
             <span class="house-sign" id="alphabetExplorerText">Alphabet Academy</span>
             <span class="house-window left-window"><span>📚</span></span>
             <span class="house-window right-window"><span>🍎</span></span>
             <span class="house-door"><span>A</span></span>
-            <span class="school-flag">🚩</span>
+            <span class="school-flag">🚩</span><span class="school-playground">🛝</span>
           </span>
           <span class="building-caption"><b>Alphabet Academy</b><small id="alphabetExplorerSubtext">Explore letters</small></span>
         </button>
@@ -79,7 +89,7 @@
             <span class="house-window left-window"><span>🧱</span></span>
             <span class="house-window right-window"><span>📐</span></span>
             <span class="house-door"><span>⚙️</span></span>
-            <span class="block-stack">🟦🟨🟥</span>
+            <span class="block-stack">🟦🟨🟥</span><span class="workshop-crane">🏗️</span><span class="workshop-tools">🧰</span>
           </span>
           <span class="building-caption"><b>Builder's Workshop</b><small id="blockWorldSubtext">Build anything</small></span>
         </button>
@@ -97,7 +107,7 @@
         </button>
 
         <button class="village-building profile-cottage" data-open="profiles" aria-label="Enter Profile Studio">
-          <span class="house-roof cottage-roof"><span class="roof-note">📷</span></span>
+          <span class="house-roof cottage-roof"><span class="roof-note">📷</span><span class="chimney"><i></i><i></i><i></i></span></span>
           <span class="house-body">
             <span class="house-sign" id="profileStudioText">Profile Studio</span>
             <span class="house-window left-window"><span>🖼️</span></span>
@@ -133,7 +143,7 @@
         <div class="village-details" aria-hidden="true">
           <span class="bench bench-one">🪑</span><span class="bench bench-two">🪑</span>
           <span class="flowers flowers-one">🌷🌼🌸</span><span class="flowers flowers-two">🌻🌷🌼</span>
-          <span class="mailbox">📬</span><span class="lamp-post">💡</span>
+          <button id="villageMailbox" class="mailbox village-secret" aria-label="Check Buddy's mailbox">📬</button><span class="lamp-post">💡</span><button id="singingBird" class="singing-bird village-secret" aria-label="Tap the bird">🐦</button><button id="magicTree" class="magic-tree village-secret" aria-label="Tap the tree">🌳</button>
         </div>
       </div>
 
@@ -335,6 +345,6 @@
 
   <div id="toast" class="toast hidden" aria-live="polite"></div>
 
-  <script src="script.js?v=village-2-0"></script>
+  <script src="script.js?v=village-polish-1-1"></script>
 </body>
 </html>
