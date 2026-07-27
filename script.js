@@ -171,6 +171,11 @@ const defaultState = {
   },
   melodyMakers: {
     discoveries: []
+  },
+  pip: {
+    shirt: "blue",
+    pants: "denim",
+    visits: 0
   }
 };
 
@@ -203,6 +208,10 @@ function loadState() {
       melodyMakers: {
         ...structuredClone(defaultState.melodyMakers),
         ...(saved.melodyMakers ?? {})
+      },
+      pip: {
+        ...structuredClone(defaultState.pip),
+        ...(saved.pip ?? {})
       }
     };
 
@@ -285,6 +294,7 @@ function showScreen(name) {
   if (name === "arcade") updateArcadeGreeting();
   if (name === "melody") playMelodyEntrance();
   if (name === "instrument") renderMusicStickers();
+  if (name === "pip") enterPipsPlace();
   if (name === "balloonGame") startPopGame("balloon");
   if (name === "bubbleGame") startPopGame("bubble");
   if (name === "colorGame") startColorMatch();
@@ -788,6 +798,7 @@ function talkToBuddy() {
   const speech = $("buddySpeech");
   const buddyButton = $("plazaBuddy");
   speech.textContent = buddyMessages[buddyMessageIndex];
+  showBuddySpeech(buddyMessages[buddyMessageIndex], 4200);
   speech.animate(
     [{ transform: "scale(.92)", opacity: .5 }, { transform: "scale(1.06)", opacity: 1 }, { transform: "scale(1)", opacity: 1 }],
     { duration: 360, easing: "ease-out" }
@@ -809,15 +820,7 @@ function talkToBuddy() {
   playTone(520 + buddyMessageIndex * 45, .08);
 }
 
-function cycleBuddyMovement() {
-  const buddyButton = $("plazaBuddy");
-  if (!buddyButton || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  buddyButton.classList.remove("is-running", "is-sitting");
-  const mode = Math.random() > .48 ? "is-running" : "is-sitting";
-  buddyButton.classList.add(mode);
-  window.setTimeout(() => buddyButton.classList.remove(mode), mode === "is-running" ? 2600 : 2200);
-}
-window.setInterval(cycleBuddyMovement, 7000);
+// Buddy 3.0 movement is controlled by the village waypoint engine near the end of this file.
 
 document.querySelectorAll("[data-open]").forEach(button => {
   button.addEventListener("click", () => showScreen(button.dataset.open));
@@ -985,3 +988,198 @@ document.querySelectorAll(".secret-flowers").forEach(flowers => {
 });
 
 setDailyVillageTip();
+
+
+
+// Meet Pip — first friend update
+const pipMessages = [
+  "I was hoping you'd stop by today!",
+  "I saw a butterfly outside my window!",
+  "Your outfit choice is one of my favorites.",
+  "Want to explore the village together?",
+  "It's nice just hanging out with you.",
+  "I put my books in rainbow order today!",
+  "I think the ducks know your name now."
+];
+let pipMessageIndex = 0;
+
+function currentExplorerName() {
+  return state.profiles?.[0]?.name || "Keelan";
+}
+
+function renderPipOutfit() {
+  const pip = $("pipAvatar");
+  if (!pip) return;
+  pip.className = `pip-avatar shirt-${state.pip.shirt} pants-${state.pip.pants}`;
+  document.querySelectorAll(".pip-outfit-choice").forEach(button => {
+    button.classList.toggle("selected", state.pip[button.dataset.pipPart] === button.dataset.pipValue);
+  });
+}
+
+function enterPipsPlace() {
+  state.pip.visits = (state.pip.visits || 0) + 1;
+  saveState();
+  const name = currentExplorerName();
+  $("pipGreeting").textContent = state.pip.visits === 1
+    ? `Hi, ${name}! I'm Pip. I'm so glad you're here!`
+    : `There you are, ${name}! I was hoping you'd visit!`;
+  $("pipMessage").textContent = state.pip.visits === 1
+    ? "This is my place. You can help me choose what to wear!"
+    : pipMessages[state.pip.visits % pipMessages.length];
+  renderPipOutfit();
+  playTone(523.25, .08);
+  setTimeout(() => playTone(659.25, .09), 100);
+}
+
+function talkToPip() {
+  pipMessageIndex = (pipMessageIndex + 1) % pipMessages.length;
+  $("pipMessage").textContent = pipMessages[pipMessageIndex];
+  const pip = $("pipAvatar");
+  pip.animate([{transform:"translateY(0)"},{transform:"translateY(-12px)"},{transform:"translateY(0)"}],{duration:520,easing:"ease-out"});
+  playTone(580 + pipMessageIndex * 24, .08);
+}
+
+document.querySelectorAll(".pip-outfit-choice").forEach(button => {
+  button.addEventListener("click", () => {
+    state.pip[button.dataset.pipPart] = button.dataset.pipValue;
+    saveState();
+    renderPipOutfit();
+    $("pipMessage").textContent = "I love it! Thanks for helping me choose.";
+    playTone(700, .09);
+  });
+});
+
+$("pipTalkButton")?.addEventListener("click", talkToPip);
+$("pipHomeButton")?.addEventListener("click", () => showScreen("home"));
+
+// Buddy 3.0 — The Village Pup Update
+const buddyWaypoints = [
+  { name: "welcome path", x: 52, y: 38, thought: "Let's explore!" },
+  { name: "Melody Makers", x: 24, y: 36, thought: "I hear music!" },
+  { name: "Alphabet Academy", x: 76, y: 36, thought: "So many letters!" },
+  { name: "duck pond", x: 39, y: 61, thought: "Hi, ducks!" },
+  { name: "fountain", x: 57, y: 57, thought: "Splashy!" },
+  { name: "Builder's Workshop", x: 26, y: 76, thought: "What should we build?" },
+  { name: "Game Arcade", x: 73, y: 76, thought: "Games sound fun!" },
+  { name: "Profile Studio", x: 50, y: 23, thought: "Looking good!" },
+  { name: "Discovery Lab", x: 51, y: 83, thought: "I wonder what's inside..." },
+  { name: "big tree", x: 13, y: 55, thought: "Nice shade." },
+  { name: "flower path", x: 84, y: 53, thought: "These flowers smell good!" },
+  { name: "village square", x: 50, y: 68, thought: "I like it here." }
+];
+
+const buddyLifeStates = [
+  { className: "is-sniffing", duration: 2100 },
+  { className: "is-sitting", duration: 3200 },
+  { className: "is-looking", duration: 1900 },
+  { className: "is-stretching", duration: 2300 },
+  { className: "is-resting", duration: 3800 }
+];
+
+let buddyJourneyTimer = null;
+let buddySpeechTimer = null;
+let buddyLastWaypoint = -1;
+let buddyIsTraveling = false;
+
+function showBuddySpeech(message, duration = 3400) {
+  const buddy = document.getElementById("plazaBuddy");
+  const speech = document.getElementById("buddySpeech");
+  if (!buddy || !speech) return;
+  speech.textContent = message;
+  buddy.classList.add("is-speaking");
+  clearTimeout(buddySpeechTimer);
+  buddySpeechTimer = setTimeout(() => buddy.classList.remove("is-speaking"), duration);
+}
+
+function clearBuddyLifeState() {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  buddy.classList.remove("is-running", "is-walking", "is-sitting", "is-sniffing", "is-looking", "is-stretching", "is-resting");
+}
+
+function chooseBuddyWaypoint() {
+  let next = Math.floor(Math.random() * buddyWaypoints.length);
+  if (buddyWaypoints.length > 1) {
+    while (next === buddyLastWaypoint) next = Math.floor(Math.random() * buddyWaypoints.length);
+  }
+  buddyLastWaypoint = next;
+  return buddyWaypoints[next];
+}
+
+function positionBuddyAt(waypoint, instant = false) {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  if (instant) buddy.classList.add("no-transition");
+  buddy.style.left = `${waypoint.x}%`;
+  buddy.style.top = `${waypoint.y}%`;
+  if (instant) requestAnimationFrame(() => buddy.classList.remove("no-transition"));
+}
+
+function buddyPauseAt(waypoint) {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  buddyIsTraveling = false;
+  clearBuddyLifeState();
+
+  const state = buddyLifeStates[Math.floor(Math.random() * buddyLifeStates.length)];
+  buddy.classList.add(state.className);
+
+  if (Math.random() < .42) showBuddySpeech(waypoint.thought, 3000);
+
+  buddyJourneyTimer = setTimeout(() => {
+    buddy.classList.remove(state.className);
+    sendBuddyExploring();
+  }, state.duration + 900 + Math.random() * 2200);
+}
+
+function sendBuddyExploring() {
+  const buddy = document.getElementById("plazaBuddy");
+  const home = document.getElementById("homeScreen");
+  if (!buddy || !home) return;
+
+  clearTimeout(buddyJourneyTimer);
+  if (!home.classList.contains("active") || document.hidden) {
+    buddyJourneyTimer = setTimeout(sendBuddyExploring, 1800);
+    return;
+  }
+
+  clearBuddyLifeState();
+  const waypoint = chooseBuddyWaypoint();
+  const currentX = parseFloat(buddy.style.left || "82");
+  const distance = Math.abs(currentX - waypoint.x);
+  const running = distance > 45 && Math.random() < .36;
+  const travelSeconds = running ? 3.4 + Math.random() * 1.2 : 5.2 + Math.random() * 2.1;
+
+  buddyIsTraveling = true;
+  buddy.classList.add(running ? "is-running" : "is-walking");
+  buddy.style.setProperty("--buddy-travel-time", `${travelSeconds}s`);
+  buddy.classList.toggle("faces-left", waypoint.x > currentX); // Buddy artwork faces left by default; flip only when traveling right.
+  positionBuddyAt(waypoint);
+
+  buddyJourneyTimer = setTimeout(() => buddyPauseAt(waypoint), travelSeconds * 1000 + 120);
+}
+
+function startBuddyVillageLife() {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  positionBuddyAt({ x: 82, y: 56 }, true);
+  buddy.classList.remove("is-speaking");
+  clearTimeout(buddyJourneyTimer);
+  buddyJourneyTimer = setTimeout(sendBuddyExploring, 1200);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && !buddyIsTraveling) {
+    clearTimeout(buddyJourneyTimer);
+    buddyJourneyTimer = setTimeout(sendBuddyExploring, 700);
+  }
+});
+
+window.addEventListener("resize", () => {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  const x = Math.min(88, Math.max(12, parseFloat(buddy.style.left || "82")));
+  buddy.style.left = `${x}%`;
+});
+
+startBuddyVillageLife();

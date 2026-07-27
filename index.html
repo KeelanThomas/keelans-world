@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#101827" />
   <title>Keelan's World</title>
-  <link rel="stylesheet" href="style.css?v=buddy-2-1" />
+  <link rel="stylesheet" href="style.css?v=meet-pip-1" />
 </head>
 <body>
   <header class="topbar">
@@ -118,18 +118,19 @@
           <span class="building-caption"><b>Profile Studio</b><small id="profileStudioSubtext">Choose your explorer</small></span>
         </button>
 
-        <div class="village-building discovery-lab-house coming-soon" aria-label="Discovery Lab opening soon">
-          <span class="lab-dome">🔭</span>
-          <span class="house-roof lab-roof"><span class="roof-note">🔬</span></span>
-          <span class="house-body">
-            <span class="house-sign">Discovery Lab</span>
-            <span class="house-window left-window"><span>🧪</span></span>
-            <span class="house-window right-window"><span>🤖</span></span>
-            <span class="house-door locked-door"><span>🔒</span></span>
-            <span class="construction-fence">🚧 OPENING SOON 🚧</span>
+        <button class="village-building pips-place" data-open="pip" aria-label="Visit Pip's Place">
+          <span class="pip-chimney-smoke"><i></i><i></i><i></i></span>
+          <span class="house-roof pip-roof"><span class="roof-note">⭐</span></span>
+          <span class="house-body pip-house-body">
+            <span class="house-sign">Pip's Place</span>
+            <span class="house-window left-window"><span>🧸</span></span>
+            <span class="house-window right-window"><span>📚</span></span>
+            <span class="house-door pip-door"><span>♥</span></span>
+            <span class="pip-flower-box">🌻🌷🌼</span>
+            <span class="pip-mailbox">📬</span>
           </span>
-          <span class="building-caption"><b>Discovery Lab</b><small>Opening Soon</small></span>
-        </div>
+          <span class="building-caption"><b>Pip's Place</b><small>Come visit your friend</small></span>
+        </button>
 
         <button id="surpriseButton" class="surprise-kiosk village-kiosk" aria-label="Surprise Me">
           <span>🎲</span><b id="surpriseMeText">Surprise Me!</b><small id="surpriseMeSubtext">Change the village colors</small>
@@ -169,7 +170,53 @@
         </div>
       </div>
 
-      <p class="plaza-tip">✨ Tap a building to visit. Tap Buddy when you need an idea!</p>
+      <p class="plaza-tip">✨ Tap a building to visit. Visit Pip whenever you want to see a friend!</p>
+    </section>
+
+
+    <section id="pipScreen" class="screen pip-screen">
+      <div class="pip-room">
+        <div class="pip-window" aria-hidden="true"><span>☀️</span><i></i><i></i></div>
+        <div class="pip-bookshelf" aria-hidden="true"><span>📚</span><span>🧸</span><span>🪴</span></div>
+        <div class="pip-rug" aria-hidden="true"></div>
+        <div class="pip-couch" aria-hidden="true"><span></span></div>
+        <div class="pip-picture" aria-hidden="true">🏡</div>
+
+        <div class="pip-welcome-card">
+          <p class="eyebrow">Meet Pip</p>
+          <h2 id="pipGreeting">Hi, Keelan! I'm so glad you're here!</h2>
+          <p id="pipMessage">This is my place. You can help me choose what to wear!</p>
+        </div>
+
+        <div class="pip-stage">
+          <div id="pipAvatar" class="pip-avatar shirt-blue pants-denim" role="img" aria-label="Pip waving hello">
+            <span class="pip-shadow"></span>
+            <span class="pip-leg pip-leg-left"></span><span class="pip-leg pip-leg-right"></span>
+            <span class="pip-shoe pip-shoe-left"></span><span class="pip-shoe pip-shoe-right"></span>
+            <span class="pip-body"></span>
+            <span class="pip-arm pip-arm-left"></span><span class="pip-arm pip-arm-right"></span>
+            <span class="pip-head"><span class="pip-hair"></span><span class="pip-ear left"></span><span class="pip-ear right"></span><span class="pip-eye left"></span><span class="pip-eye right"></span><span class="pip-nose"></span><span class="pip-smile"></span></span>
+          </div>
+          <button id="pipTalkButton" class="primary-button pip-talk-button">👋 Talk to Pip</button>
+        </div>
+
+        <aside class="pip-closet">
+          <h3>👕 Pip's Closet</h3>
+          <p>Pick an outfit. Pip will remember it!</p>
+          <div class="closet-group"><strong>Shirt</strong><div class="pip-choice-row">
+            <button class="pip-outfit-choice" data-pip-part="shirt" data-pip-value="blue">Blue</button>
+            <button class="pip-outfit-choice" data-pip-part="shirt" data-pip-value="green">Green</button>
+            <button class="pip-outfit-choice" data-pip-part="shirt" data-pip-value="purple">Purple</button>
+            <button class="pip-outfit-choice" data-pip-part="shirt" data-pip-value="red">Red</button>
+          </div></div>
+          <div class="closet-group"><strong>Pants</strong><div class="pip-choice-row">
+            <button class="pip-outfit-choice" data-pip-part="pants" data-pip-value="denim">Jeans</button>
+            <button class="pip-outfit-choice" data-pip-part="pants" data-pip-value="dark">Dark</button>
+            <button class="pip-outfit-choice" data-pip-part="pants" data-pip-value="tan">Tan</button>
+          </div></div>
+          <button id="pipHomeButton" class="primary-button">← Back to the Village</button>
+        </aside>
+      </div>
     </section>
 
     <section id="profilesScreen" class="screen">
@@ -367,6 +414,6 @@
 
   <div id="toast" class="toast hidden" aria-live="polite"></div>
 
-  <script src="script.js?v=buddy-2-1"></script>
+  <script src="script.js?v=meet-pip-1"></script>
 </body>
 </html>
