@@ -177,7 +177,8 @@ const defaultState = {
     pants: "denim",
     visits: 0,
     mailboxReads: 0,
-    journalEntries: []
+    journalEntries: [],
+    lastVillageActivity: null
   }
 };
 
@@ -1269,5 +1270,85 @@ window.addEventListener("resize", () => {
   buddy.style.left = `${x}%`;
 });
 
+// Sprint 002 — Pip Lives Here
+const pipVillageActivities = [
+  { id:"reading", label:"Pip is reading", prop:"📖", x:16, y:59, greeting:"Oh! Hi, {name}! I was just finishing this page. This story made me think of you." },
+  { id:"watering", label:"Pip is watering flowers", prop:"🚿", x:72, y:56, greeting:"Hi, {name}! The sunflowers are getting so big. Buddy tried to help, but he watered his own paws." },
+  { id:"painting", label:"Pip is painting", prop:"🎨", x:84, y:62, greeting:"There you are, {name}! I'm painting the village today. I saved a bright spot just for you." },
+  { id:"butterflies", label:"Pip is watching butterflies", prop:"🦋", x:31, y:55, greeting:"Oh! Hi, {name}! Buddy and I were counting butterflies. We keep losing count." },
+  { id:"sweeping", label:"Pip is sweeping the path", prop:"🧹", x:58, y:70, greeting:"Hi, {name}! I was tidying the path before you came by. I'm really glad you're here." },
+  { id:"cocoa", label:"Pip is having cocoa", prop:"☕", x:64, y:53, greeting:"Oh! Hi, {name}! I made cocoa and found the coziest place to sit." },
+  { id:"flowers", label:"Pip is picking flowers", prop:"🌼", x:45, y:69, greeting:"Hi, {name}! I found the happiest little flowers. This one looks like sunshine." }
+];
+let activePipVillageActivity = null;
+let pipVillageSpeechTimer = null;
+
+function choosePipVillageActivity(){
+  const previous = state.pip.lastVillageActivity;
+  let choices = pipVillageActivities.filter(activity => activity.id !== previous);
+  if (!choices.length) choices = pipVillageActivities;
+  const activity = choices[Math.floor(Math.random()*choices.length)];
+  state.pip.lastVillageActivity = activity.id;
+  saveState();
+  return activity;
+}
+
+function applyVillagePipOutfit(){
+  const pip = $("villagePip");
+  if (!pip) return;
+  const shirtColors = {blue:"#3284d6",green:"#4ea96a",purple:"#8562c8",red:"#d85f62"};
+  const pantsColors = {denim:"#49749b",dark:"#3f4655",tan:"#a67b52"};
+  pip.style.setProperty("--pip-shirt", shirtColors[state.pip.shirt] || shirtColors.blue);
+  pip.style.setProperty("--pip-pants", pantsColors[state.pip.pants] || pantsColors.denim);
+}
+
+function showPipVillageSpeech(message,duration=5200){
+  const pip=$("villagePip");
+  if(!pip) return;
+  $("pipVillageSpeech").textContent=message;
+  pip.classList.add("is-speaking","noticed");
+  clearTimeout(pipVillageSpeechTimer);
+  pipVillageSpeechTimer=setTimeout(()=>pip.classList.remove("is-speaking","noticed"),duration);
+}
+
+function setupVillagePip(){
+  const pip=$("villagePip");
+  if(!pip) return;
+  activePipVillageActivity=choosePipVillageActivity();
+  pipVillageActivities.forEach(activity=>pip.classList.remove(`activity-${activity.id}`));
+  pip.classList.add(`activity-${activePipVillageActivity.id}`);
+  pip.style.left=`${activePipVillageActivity.x}%`;
+  pip.style.top=`${activePipVillageActivity.y}%`;
+  $("pipActivityProp").textContent=activePipVillageActivity.prop;
+  $("pipActivityLabel").textContent=activePipVillageActivity.label;
+  applyVillagePipOutfit();
+  pip.setAttribute("aria-label",`${activePipVillageActivity.label}. Talk to Pip.`);
+}
+
+function beginVillageWelcome(){
+  const pip=$("villagePip");
+  const buddy=$("plazaBuddy");
+  if(!pip||!buddy||!activePipVillageActivity){ startBuddyVillageLife(); return; }
+  clearTimeout(buddyJourneyTimer);
+  positionBuddyAt({x:Math.min(88,activePipVillageActivity.x+8),y:activePipVillageActivity.y+5},true);
+  setTimeout(()=>{
+    buddy.classList.add("is-happy");
+    showBuddySpeech("Woof! Keelan is here!",2400);
+  },900);
+  setTimeout(()=>{
+    buddy.classList.remove("is-happy");
+    const name=currentExplorerName();
+    showPipVillageSpeech(activePipVillageActivity.greeting.replace("{name}",name));
+  },2700);
+  buddyJourneyTimer=setTimeout(sendBuddyExploring,6500);
+}
+
+$("villagePip")?.addEventListener("click",()=>{
+  if(!activePipVillageActivity) return;
+  showPipVillageSpeech(activePipVillageActivity.greeting.replace("{name}",currentExplorerName()));
+  playTone(659.25,.08);setTimeout(()=>playTone(783.99,.1),100);
+});
+
 document.getElementById("pipMailbox")?.classList.add("has-mail");
-startBuddyVillageLife();
+setupVillagePip();
+beginVillageWelcome();
