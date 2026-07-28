@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#101827" />
   <title>Keelan's World</title>
-  <link rel="stylesheet" href="style.css?v=meet-pip-1" />
+  <link rel="stylesheet" href="style.css?v=the-first-letter-1" />
 </head>
 <body>
   <header class="topbar">
@@ -127,9 +127,13 @@
             <span class="house-window right-window"><span>📚</span></span>
             <span class="house-door pip-door"><span>♥</span></span>
             <span class="pip-flower-box">🌻🌷🌼</span>
-            <span class="pip-mailbox">📬</span>
           </span>
           <span class="building-caption"><b>Pip's Place</b><small>Come visit your friend</small></span>
+        </button>
+        <button id="pipMailbox" class="pip-mailbox" type="button" aria-label="Check Pip's mailbox">
+          <span class="mailbox-post" aria-hidden="true"></span>
+          <span class="mailbox-box" aria-hidden="true">📬</span>
+          <span class="mail-spark" aria-hidden="true">✉️</span>
         </button>
 
         <button id="surpriseButton" class="surprise-kiosk village-kiosk" aria-label="Surprise Me">
@@ -181,6 +185,7 @@
         <div class="pip-rug" aria-hidden="true"></div>
         <div class="pip-couch" aria-hidden="true"><span></span></div>
         <div class="pip-picture" aria-hidden="true">🏡</div>
+        <button id="indoorPipMail" class="indoor-pip-mail" type="button" aria-label="Read Pip's latest letter">✉️ <span>Latest Letter</span></button>
 
         <div class="pip-welcome-card">
           <p class="eyebrow">Meet Pip</p>
@@ -387,6 +392,29 @@
 
   </main>
 
+
+  <div id="pipLetterOverlay" class="pip-letter-overlay" role="dialog" aria-modal="true" aria-labelledby="pipLetterTitle" aria-hidden="true">
+    <button id="pipLetterBackdrop" class="pip-letter-backdrop" type="button" aria-label="Close Pip's letter"></button>
+    <article class="pip-letter-paper">
+      <span class="letter-tape letter-tape-left" aria-hidden="true"></span>
+      <span class="letter-tape letter-tape-right" aria-hidden="true"></span>
+      <button id="closePipLetter" class="pip-letter-close" type="button" aria-label="Close Pip's letter">×</button>
+      <div class="pip-letter-stamp" aria-hidden="true">⭐</div>
+      <p class="pip-letter-kicker">A little letter from</p>
+      <h2 id="pipLetterTitle">Pip</h2>
+      <div class="pip-letter-divider" aria-hidden="true">🌿</div>
+      <p id="pipLetterGreeting" class="pip-letter-greeting">Dear Keelan,</p>
+      <p id="pipLetterText" class="pip-letter-text">I am really glad you came to visit.</p>
+      <p class="pip-letter-signoff">Your friend,<br><strong>Pip</strong> <span aria-hidden="true">💙</span></p>
+      <div class="pip-letter-footer">
+        <span id="pipLetterSaved" class="pip-letter-saved">📖 Saved in the Book of Pip</span>
+        <button id="pipLetterDone" class="pip-letter-done" type="button">Back to the Village</button>
+      </div>
+      <span class="buddy-paw-print paw-one" aria-hidden="true">🐾</span>
+      <span class="buddy-paw-print paw-two" aria-hidden="true">🐾</span>
+    </article>
+  </div>
+
   <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
     <div class="modal-card">
       <button id="closeModalButton" class="close-button" aria-label="Close">×</button>
@@ -414,6 +442,6 @@
 
   <div id="toast" class="toast hidden" aria-live="polite"></div>
 
-  <script src="script.js?v=meet-pip-1"></script>
+  <script src="script.js?v=the-first-letter-1"></script>
 </body>
 </html>

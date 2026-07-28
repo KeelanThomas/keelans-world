@@ -1256,7 +1256,14 @@ button.village-building:hover,button.village-building:focus-visible { transform:
 .pips-place:hover,.pips-place:focus-visible{transform:translateX(-50%) translateY(-8px) scale(.93)!important}
 .pip-roof{background:#d45f68!important}.pip-house-body{background:#fff2ca!important}.pip-door{background:#6e9a75!important}
 .pip-flower-box{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);font-size:1.2rem;white-space:nowrap}
-.pip-mailbox{position:absolute;right:-34px;bottom:3px;font-size:1.55rem}
+.pip-mailbox{position:absolute;left:calc(50% + 112px);bottom:4.5%;width:66px;height:92px;border:0;background:transparent;cursor:pointer;padding:0;z-index:26;filter:drop-shadow(0 5px 3px #0004);transition:transform .18s ease}
+.pip-mailbox:hover,.pip-mailbox:focus-visible{transform:translateY(-7px) rotate(-3deg)}
+.pip-mailbox:focus-visible{outline:4px solid #fff;outline-offset:5px;border-radius:18px}
+.mailbox-post{position:absolute;left:29px;top:38px;width:10px;height:52px;border:3px solid #6f452b;border-radius:5px;background:#a96b3f}
+.mailbox-box{position:absolute;left:0;top:0;font-size:3.15rem;line-height:1;filter:drop-shadow(0 2px 0 #fff8)}
+.pip-mailbox .mail-spark{position:absolute;right:-5px;top:-10px;font-size:1.05rem;opacity:0;transform:scale(.4)}
+.pip-mailbox.has-mail .mail-spark{opacity:1;animation:pipMailBounce 1.7s ease-in-out infinite}
+@keyframes pipMailBounce{0%,100%{transform:translateY(0) scale(.9) rotate(-8deg)}50%{transform:translateY(-9px) scale(1.12) rotate(8deg)}}
 .pip-chimney-smoke{position:absolute;z-index:8;left:67%;top:-12px}.pip-chimney-smoke i{position:absolute;width:12px;height:12px;border-radius:50%;background:#fff9;animation:pipSmoke 3.5s ease-out infinite}.pip-chimney-smoke i:nth-child(2){animation-delay:1.1s}.pip-chimney-smoke i:nth-child(3){animation-delay:2.2s}@keyframes pipSmoke{0%{transform:translate(0,15px) scale(.55);opacity:0}25%{opacity:.8}100%{transform:translate(18px,-35px) scale(1.6);opacity:0}}
 
 .pip-screen{min-height:calc(100vh - 70px);padding:1.2rem;background:linear-gradient(#a9dcff 0 26%,#f7e4bd 26% 100%)}
@@ -1280,3 +1287,45 @@ button.village-building:hover,button.village-building:focus-visible { transform:
 .pip-closet{position:absolute;z-index:8;right:3%;bottom:4%;width:275px;padding:1rem;border:5px solid #fff;border-radius:22px;background:#fff9e9f2;box-shadow:0 10px 25px #3e2b1f33}.pip-closet h3{margin:.1rem 0 .3rem;color:#6b4a36}.pip-closet p{font-size:.86rem}.closet-group{margin:.75rem 0}.pip-choice-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.35rem}.pip-outfit-choice{padding:.45rem .62rem;border:3px solid #d9c49d;border-radius:12px;background:#fff;cursor:pointer;font-weight:800}.pip-outfit-choice.selected{border-color:#3b82f6;box-shadow:0 0 0 3px #bfdbfe}
 @media(max-width:900px){.pips-place{bottom:0;transform:translateX(-50%) scale(.78)}.pip-room{min-height:980px}.pip-welcome-card{left:8%;right:8%}.pip-stage{left:50%;bottom:31%;transform:translateX(-50%)}.pip-closet{left:50%;right:auto;bottom:2%;width:min(88%,420px);transform:translateX(-50%)}.pip-bookshelf{right:3%;transform:scale(.8);transform-origin:top right}.pip-couch{transform:scale(.8);transform-origin:left bottom}}
 @media(max-width:560px){.pips-place{bottom:1%;transform:translateX(-50%) scale(.7)}.pip-window,.pip-bookshelf,.pip-picture{display:none}.pip-room{min-height:900px}.pip-stage{bottom:34%}.pip-avatar{transform:scale(.86);transform-origin:center bottom}.pip-closet{width:90%}}
+
+/* Pip's Mailbox update */
+.indoor-pip-mail{position:absolute;left:7%;top:40%;border:0;border-radius:18px;background:#fff7d7;color:#6b4b2a;padding:.7rem .85rem;font-weight:900;box-shadow:0 7px 0 #d8aa65,0 12px 24px #6d4c2f30;cursor:pointer;transform:rotate(-2deg);z-index:7}
+.indoor-pip-mail:hover,.indoor-pip-mail:focus-visible{transform:translateY(-3px) rotate(1deg)}
+.pip-note-card{position:absolute;left:50%;top:50%;width:min(430px,86vw);transform:translate(-50%,-45%) scale(.85) rotate(-2deg);background:#fff9dc;border:4px solid #e6bd6e;border-radius:22px;padding:1.4rem 1.5rem;box-shadow:0 24px 60px #2d1d1738;z-index:30;opacity:0;pointer-events:none;transition:.25s ease}
+.pip-note-card.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1) rotate(-1deg)}
+.pip-note-card:before{content:"";position:absolute;inset:9px;border:2px dashed #e8c77f;border-radius:14px;pointer-events:none}
+.pip-note-card p{position:relative;font-size:1.12rem;line-height:1.55;margin:.45rem 0;color:#4b3828!important;text-shadow:none!important}.pip-note-card .eyebrow{color:#1686a4!important;font-size:1rem;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}.pip-note-card #pipNoteText{color:#3f3025!important;font-size:1.22rem;font-weight:700}
+.pip-note-card button{position:absolute;right:10px;top:7px;width:34px;height:34px;border:0;border-radius:50%;background:#ef7b75;color:white;font-size:1.35rem;font-weight:900;cursor:pointer;z-index:2}
+@media(max-width:760px){.indoor-pip-mail{left:4%;top:31%;font-size:.8rem}.pip-note-card{top:46%}}
+
+@media(max-width:900px){.pip-mailbox{left:calc(50% + 88px);bottom:4%;transform:scale(.9)}.pip-mailbox:hover,.pip-mailbox:focus-visible{transform:translateY(-5px) rotate(-3deg) scale(.9)}}
+@media(max-width:560px){.pip-mailbox{left:calc(50% + 67px);bottom:4.8%;transform:scale(.72)}.pip-mailbox:hover,.pip-mailbox:focus-visible{transform:translateY(-4px) rotate(-3deg) scale(.72)}.pip-note-card{width:min(520px,90vw);padding:1.7rem 1.6rem}.pip-note-card #pipNoteText{font-size:1.12rem}}
+
+
+/* The First Letter — Pip's mailbox opens without leaving the village */
+body.pip-letter-is-open{overflow:hidden}
+.pip-letter-overlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:22px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease}
+.pip-letter-overlay.open{opacity:1;visibility:visible;pointer-events:auto}
+.pip-letter-backdrop{position:absolute;inset:0;border:0;background:rgba(30,44,48,.58);backdrop-filter:blur(4px);cursor:pointer}
+.pip-letter-paper{position:relative;width:min(620px,92vw);max-height:min(820px,88vh);overflow:auto;padding:52px 58px 38px;border:5px solid #e3bd72;border-radius:10px 28px 14px 24px;background:linear-gradient(rgba(255,252,230,.95),rgba(255,247,207,.98)),repeating-linear-gradient(0deg,transparent 0 33px,rgba(84,143,157,.12) 34px 35px);box-shadow:0 28px 80px rgba(20,28,30,.45),inset 0 0 0 10px rgba(255,255,255,.5);color:#3f3025;transform:translateY(70px) scale(.9) rotate(-1.5deg);transition:transform .38s cubic-bezier(.2,.9,.25,1.15);isolation:isolate}
+.pip-letter-overlay.open .pip-letter-paper{transform:translateY(0) scale(1) rotate(-.5deg)}
+.pip-letter-paper:before{content:"";position:absolute;inset:17px;border:2px dashed #dfbd77;border-radius:8px 20px 9px 18px;pointer-events:none;z-index:-1}
+.letter-tape{position:absolute;top:-13px;width:90px;height:30px;background:rgba(196,226,210,.82);box-shadow:0 2px 4px #0001}
+.letter-tape-left{left:58px;transform:rotate(-5deg)}.letter-tape-right{right:58px;transform:rotate(6deg)}
+.pip-letter-close{position:absolute;right:16px;top:14px;width:42px;height:42px;border:0;border-radius:50%;background:#e96f6c;color:#fff;font-size:1.65rem;font-weight:900;line-height:1;cursor:pointer;box-shadow:0 5px 0 #b54e4c;z-index:3}
+.pip-letter-close:hover,.pip-letter-close:focus-visible{transform:translateY(-2px);outline:4px solid #fff;outline-offset:3px}
+.pip-letter-stamp{position:absolute;left:28px;top:27px;display:grid;place-items:center;width:58px;height:58px;border:3px dashed #5f98a4;border-radius:12px;background:#d9f2ed;font-size:1.8rem;transform:rotate(-7deg)}
+.pip-letter-kicker{margin:0;text-align:center;text-transform:uppercase;letter-spacing:.18em;font-size:.82rem;font-weight:900;color:#438493}
+.pip-letter-paper h2{margin:.15rem 0 .3rem;text-align:center;font-family:Georgia,serif;font-size:2.7rem;color:#305d65}
+.pip-letter-divider{text-align:center;font-size:1.25rem;letter-spacing:.5rem}
+.pip-letter-greeting{margin:1.4rem 0 .8rem;font-family:Georgia,serif;font-size:1.3rem;font-weight:800;color:#49372a}
+.pip-letter-text{min-height:120px;margin:.3rem 0 1.2rem;font-family:Georgia,serif;font-size:1.27rem;line-height:1.75;font-weight:600;color:#3f3025}
+.pip-letter-signoff{margin:1rem 1rem 1.4rem auto;width:max-content;max-width:75%;font-family:Georgia,serif;font-size:1.18rem;line-height:1.55;color:#49372a;transform:rotate(-2deg)}
+.pip-letter-signoff strong{font-size:1.55rem;color:#31798b}
+.pip-letter-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-top:18px;border-top:2px dashed #d7b572}
+.pip-letter-saved{font-size:.88rem;font-weight:900;color:#557247}
+.pip-letter-done{border:3px solid #2e6f7c;border-radius:16px;background:#70c6bc;color:#173f46;padding:.75rem 1rem;font-weight:1000;cursor:pointer;box-shadow:0 5px 0 #2e6f7c}
+.pip-letter-done:hover,.pip-letter-done:focus-visible{transform:translateY(-2px);outline:3px solid #fff;outline-offset:2px}
+.buddy-paw-print{position:absolute;font-size:1.35rem;opacity:.16;filter:grayscale(1)}.paw-one{left:38px;bottom:92px;transform:rotate(24deg)}.paw-two{left:65px;bottom:64px;transform:rotate(45deg)}
+@media(max-width:620px){.pip-letter-overlay{padding:12px}.pip-letter-paper{width:95vw;max-height:91vh;padding:58px 28px 28px}.pip-letter-stamp{left:20px;top:22px;width:48px;height:48px;font-size:1.4rem}.pip-letter-paper h2{font-size:2.25rem}.pip-letter-text{font-size:1.12rem;line-height:1.65}.pip-letter-footer{flex-direction:column;align-items:stretch;text-align:center}.pip-letter-done{width:100%}.letter-tape-left{left:40px}.letter-tape-right{right:40px}}
+@media(prefers-reduced-motion:reduce){.pip-letter-overlay,.pip-letter-paper{transition:none}.pip-mailbox.has-mail .mail-spark{animation:none;opacity:1}}

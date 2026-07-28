@@ -175,7 +175,9 @@ const defaultState = {
   pip: {
     shirt: "blue",
     pants: "denim",
-    visits: 0
+    visits: 0,
+    mailboxReads: 0,
+    journalEntries: []
   }
 };
 
@@ -991,6 +993,97 @@ setDailyVillageTip();
 
 
 
+
+// Pip's Mailbox — The First Letter
+const pipMailboxNotes = [
+  { id: "porch-light", text: "I left the porch light on because I hoped you might visit. Buddy is curled up nearby, pretending he is not waiting too." },
+  { id: "three-sticks", text: "Buddy tried to carry three sticks at once today. He dropped all three, picked them back up, and looked very proud of himself." },
+  { id: "music-window", text: "I heard music floating over from Melody Makers. It made the whole village feel cheerful. Maybe we can make a song together later." },
+  { id: "duck-party", text: "The ducks were splashing in the pond this morning. I think they were having a party, although none of them remembered to invite Buddy." },
+  { id: "favorite-outfit", text: "I put on my favorite outfit today. Thank you for helping me choose it. It feels extra special because my friend picked it." },
+  { id: "moon-stone", text: "I found a smooth little stone beside the path. It looks like a tiny moon, so I saved it on my shelf to show you." },
+  { id: "no-hurry", text: "You never have to hurry here. We can explore, play, listen to music, or just sit together for a while." },
+  { id: "flower-sniffs", text: "Buddy sniffed every flower by the cottage again. I did not tell him they were the same flowers he sniffed yesterday." },
+  { id: "cozy-couch", text: "I saved a cozy spot for you on the couch. Buddy tried to take it, but I reminded him that he already has three favorite spots." },
+  { id: "shared-world", text: "I am really glad Keelan's World is a place we get to share. It always feels brighter when you are here." }
+];
+
+let pipLetterReturnFocus = null;
+
+function currentPipNote() {
+  const reads = Number(state.pip.mailboxReads) || 0;
+  return pipMailboxNotes[reads % pipMailboxNotes.length];
+}
+
+function archivePipLetter(note) {
+  if (!Array.isArray(state.pip.journalEntries)) state.pip.journalEntries = [];
+  if (!state.pip.journalEntries.some(entry => entry.id === note.id)) {
+    state.pip.journalEntries.push({
+      id: note.id,
+      text: note.text,
+      savedAt: new Date().toISOString()
+    });
+  }
+}
+
+function getExplorerName() {
+  return state.profiles?.[0]?.name || "Keelan";
+}
+
+function openPipLetter({ advance = false } = {}) {
+  const note = advance
+    ? currentPipNote()
+    : (state.pip.journalEntries?.at(-1) || currentPipNote());
+
+  if (advance) {
+    state.pip.mailboxReads = (Number(state.pip.mailboxReads) || 0) + 1;
+    archivePipLetter(note);
+    saveState();
+    $("pipMailbox")?.classList.remove("has-mail");
+  }
+
+  pipLetterReturnFocus = document.activeElement;
+  $("pipLetterGreeting").textContent = `Dear ${getExplorerName()},`;
+  $("pipLetterText").textContent = note.text;
+  $("pipLetterSaved").textContent = state.pip.journalEntries?.some(entry => entry.id === note.id)
+    ? "📖 Saved in the Book of Pip"
+    : "💌 A letter waiting just for you";
+
+  const overlay = $("pipLetterOverlay");
+  overlay.classList.add("open");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("pip-letter-is-open");
+  $("closePipLetter")?.focus();
+
+  playTone(659.25, .08);
+  setTimeout(() => playTone(783.99, .1), 100);
+}
+
+function closePipLetter() {
+  const overlay = $("pipLetterOverlay");
+  overlay.classList.remove("open");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("pip-letter-is-open");
+  if (pipLetterReturnFocus && typeof pipLetterReturnFocus.focus === "function") {
+    pipLetterReturnFocus.focus();
+  }
+}
+
+$("pipMailbox")?.addEventListener("click", event => {
+  event.stopPropagation();
+  openPipLetter({ advance: true });
+});
+$("indoorPipMail")?.addEventListener("click", () => openPipLetter({ advance: false }));
+$("closePipLetter")?.addEventListener("click", closePipLetter);
+$("pipLetterDone")?.addEventListener("click", closePipLetter);
+$("pipLetterBackdrop")?.addEventListener("click", closePipLetter);
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && $("pipLetterOverlay")?.classList.contains("open")) {
+    closePipLetter();
+  }
+});
+
 // Meet Pip — first friend update
 const pipMessages = [
   "I was hoping you'd stop by today!",
@@ -1054,15 +1147,9 @@ $("pipHomeButton")?.addEventListener("click", () => showScreen("home"));
 
 // Buddy 3.0 — The Village Pup Update
 const buddyWaypoints = [
-  { name: "welcome path", x: 52, y: 38, thought: "Let's explore!" },
-  { name: "Melody Makers", x: 24, y: 36, thought: "I hear music!" },
-  { name: "Alphabet Academy", x: 76, y: 36, thought: "So many letters!" },
+  { name: "Pip's porch", x: 64, y: 52, thought: "Pip is home!" },
   { name: "duck pond", x: 39, y: 61, thought: "Hi, ducks!" },
-  { name: "fountain", x: 57, y: 57, thought: "Splashy!" },
-  { name: "Builder's Workshop", x: 26, y: 76, thought: "What should we build?" },
-  { name: "Game Arcade", x: 73, y: 76, thought: "Games sound fun!" },
-  { name: "Profile Studio", x: 50, y: 23, thought: "Looking good!" },
-  { name: "Discovery Lab", x: 51, y: 83, thought: "I wonder what's inside..." },
+  { name: "Melody Makers", x: 24, y: 36, thought: "I hear music!" },
   { name: "big tree", x: 13, y: 55, thought: "Nice shade." },
   { name: "flower path", x: 84, y: 53, thought: "These flowers smell good!" },
   { name: "village square", x: 50, y: 68, thought: "I like it here." }
@@ -1182,4 +1269,5 @@ window.addEventListener("resize", () => {
   buddy.style.left = `${x}%`;
 });
 
+document.getElementById("pipMailbox")?.classList.add("has-mail");
 startBuddyVillageLife();
