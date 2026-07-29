@@ -178,7 +178,8 @@ const defaultState = {
     visits: 0,
     mailboxReads: 0,
     journalEntries: [],
-    lastVillageActivity: null
+    lastVillageActivity: null,
+    lastVillageGreeting: null
   }
 };
 
@@ -1371,14 +1372,70 @@ window.addEventListener("resize", () => {
 
 // Sprint 002 — Pip Lives Here
 const pipVillageActivities = [
-  { id:"reading", label:"Pip is reading", prop:"📖", x:16, y:59, greeting:"Oh! Hi, {name}! I was just finishing this page. This story made me think of you." },
-  { id:"watering", label:"Pip is watering flowers", prop:"🚿", x:72, y:56, greeting:"Hi, {name}! The sunflowers are getting so big. Buddy tried to help, but he watered his own paws." },
-  { id:"painting", label:"Pip is painting", prop:"🎨", x:84, y:62, greeting:"There you are, {name}! I'm painting the village today. I saved a bright spot just for you." },
-  { id:"butterflies", label:"Pip is watching butterflies", prop:"🦋", x:31, y:55, greeting:"Oh! Hi, {name}! Buddy and I were counting butterflies. We keep losing count." },
-  { id:"sweeping", label:"Pip is sweeping the path", prop:"🧹", x:58, y:70, greeting:"Hi, {name}! I was tidying the path before you came by. I'm really glad you're here." },
-  { id:"cocoa", label:"Pip is having cocoa", prop:"☕", x:64, y:53, greeting:"Oh! Hi, {name}! I made cocoa and found the coziest place to sit." },
-  { id:"flowers", label:"Pip is picking flowers", prop:"🌼", x:45, y:69, greeting:"Hi, {name}! I found the happiest little flowers. This one looks like sunshine." }
+  { id:"reading", label:"Pip is reading", prop:"📖", x:16, y:59, greetings:[
+    "I was just finishing this page. This story made me think of you.",
+    "This book has a very brave little explorer in it. I think you would like them.",
+    "I saved my favorite part so I could tell you about it."
+  ]},
+  { id:"watering", label:"Pip is watering flowers", prop:"🚿", x:72, y:56, greetings:[
+    "The sunflowers are getting so big. Buddy tried to help, but he watered his own paws.",
+    "The flowers looked thirsty, so I brought them a little drink.",
+    "I think this yellow flower opened just because you came by."
+  ]},
+  { id:"painting", label:"Pip is painting", prop:"🎨", x:84, y:62, greetings:[
+    "I'm painting the village today. I saved a bright spot just for you.",
+    "I mixed a new blue for the sky. It might be my favorite color yet.",
+    "Buddy nearly put a paw print in my picture. Honestly, it would have looked cute."
+  ]},
+  { id:"butterflies", label:"Pip is watching butterflies", prop:"🦋", x:31, y:55, greetings:[
+    "Buddy and I were counting butterflies. We keep losing count.",
+    "That butterfly has visited the same flower three times today.",
+    "I wonder where butterflies go when they want to rest."
+  ]},
+  { id:"sweeping", label:"Pip is sweeping the path", prop:"🧹", x:58, y:70, greetings:[
+    "I was tidying the path before you came by. I'm really glad you're here.",
+    "The wind keeps bringing the leaves back. I think it wants me to stay outside.",
+    "The path looks extra welcoming now that you're here."
+  ]},
+  { id:"cocoa", label:"Pip is having cocoa", prop:"☕", x:64, y:53, greetings:[
+    "I made cocoa and found the coziest place to sit.",
+    "My cocoa is still warm. I knew today would be a cozy day.",
+    "Buddy sniffed my cocoa and sneezed. He is pretending that never happened."
+  ]},
+  { id:"flowers", label:"Pip is picking flowers", prop:"🌼", x:45, y:69, greetings:[
+    "I found the happiest little flowers. This one looks like sunshine.",
+    "I only picked the flowers that were ready to come along.",
+    "I think these would look nice beside the window."
+  ]}
 ];
+
+const pipTimeGreetings = {
+  morning: [
+    "Good morning, {name}! The village is just waking up.",
+    "Good morning, {name}! Buddy has already had a very busy morning.",
+    "The flowers look extra cheerful this morning. I'm glad you're here, {name}!"
+  ],
+  afternoon: [
+    "I'm glad you're here, {name}. It's a beautiful afternoon for wandering.",
+    "Hi, {name}! The village feels especially sunny today.",
+    "There you are, {name}! Buddy and I were hoping you would visit."
+  ],
+  evening: [
+    "Good evening, {name}. Everything feels peaceful tonight.",
+    "I'm glad you stopped by before bedtime, {name}.",
+    "The village is getting quiet, but there is always time for a visit with you, {name}."
+  ]
+};
+
+const pipTinySurprises = [
+  "I found a tiny blue feather this morning. I left it somewhere safe.",
+  "Buddy fell asleep under the tree earlier and woke up with a leaf on his nose.",
+  "I think the ducks were talking about Buddy today. They looked very serious.",
+  "A butterfly followed me halfway across the village and then changed its mind.",
+  "The breeze made the porch chimes sing all by themselves.",
+  "I baked too many cookies today. That feels like a very nice kind of problem."
+];
+
 let activePipVillageActivity = null;
 let pipVillageSpeechTimer = null;
 
@@ -1390,6 +1447,51 @@ function choosePipVillageActivity(){
   state.pip.lastVillageActivity = activity.id;
   saveState();
   return activity;
+}
+
+function villageDayPart(){
+  const hour = new Date().getHours();
+  if(hour < 12) return "morning";
+  if(hour < 18) return "afternoon";
+  return "evening";
+}
+
+function choosePipGreeting({welcome=false}={}){
+  const name=currentExplorerName();
+  const candidates=[];
+  const dayPart=villageDayPart();
+
+  if(welcome){
+    pipTimeGreetings[dayPart].forEach((text,index)=>candidates.push({
+      key:`time-${dayPart}-${index}`,
+      text
+    }));
+  }
+
+  if(activePipVillageActivity){
+    activePipVillageActivity.greetings.forEach((text,index)=>candidates.push({
+      key:`activity-${activePipVillageActivity.id}-${index}`,
+      text:`${welcome ? "" : `Hi, {name}! `}${text}`
+    }));
+  }
+
+  // A rare, no-pressure glimpse into village life.
+  if(!welcome && Math.random() < .18){
+    pipTinySurprises.forEach((text,index)=>candidates.push({
+      key:`surprise-${index}`,
+      text
+    }));
+  }
+
+  let choices=candidates.filter(item=>item.key!==state.pip.lastVillageGreeting);
+  if(!choices.length) choices=candidates;
+  const selected=choices[Math.floor(Math.random()*choices.length)] || {
+    key:"fallback",
+    text:"I'm really glad you're here, {name}."
+  };
+  state.pip.lastVillageGreeting=selected.key;
+  saveState();
+  return selected.text.replaceAll("{name}",name);
 }
 
 function applyVillagePipOutfit(){
@@ -1436,15 +1538,14 @@ function beginVillageWelcome(){
   },900);
   setTimeout(()=>{
     buddy.classList.remove("is-happy");
-    const name=currentExplorerName();
-    showPipVillageSpeech(activePipVillageActivity.greeting.replace("{name}",name));
+    showPipVillageSpeech(choosePipGreeting({welcome:true}),6200);
   },2700);
   buddyJourneyTimer=setTimeout(sendBuddyExploring,6500);
 }
 
 $("villagePip")?.addEventListener("click",()=>{
   if(!activePipVillageActivity) return;
-  showPipVillageSpeech(activePipVillageActivity.greeting.replace("{name}",currentExplorerName()));
+  showPipVillageSpeech(choosePipGreeting(),5600);
   playTone(659.25,.08);setTimeout(()=>playTone(783.99,.1),100);
 });
 
