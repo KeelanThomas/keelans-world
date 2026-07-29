@@ -1146,14 +1146,14 @@ document.querySelectorAll(".pip-outfit-choice").forEach(button => {
 $("pipTalkButton")?.addEventListener("click", talkToPip);
 $("pipHomeButton")?.addEventListener("click", () => showScreen("home"));
 
-// Buddy 3.0 — The Village Pup Update
+// Buddy 3.1 — Operation: Save the Ducks
 const buddyWaypoints = [
   { name: "Pip's porch", x: 64, y: 52, thought: "Pip is home!" },
-  { name: "duck pond", x: 39, y: 61, thought: "Hi, ducks!" },
+  { name: "duck lookout", x: 49, y: 72, thought: "Hi, ducks! I'll watch from here.", watchesDucks: true },
   { name: "Melody Makers", x: 24, y: 36, thought: "I hear music!" },
   { name: "big tree", x: 13, y: 55, thought: "Nice shade." },
   { name: "flower path", x: 84, y: 53, thought: "These flowers smell good!" },
-  { name: "village square", x: 50, y: 68, thought: "I like it here." }
+  { name: "village square", x: 55, y: 75, thought: "I like it here." }
 ];
 
 const buddyLifeStates = [
@@ -1168,6 +1168,8 @@ let buddyJourneyTimer = null;
 let buddySpeechTimer = null;
 let buddyLastWaypoint = -1;
 let buddyIsTraveling = false;
+let buddyRouteQueue = [];
+let buddyFinalWaypoint = null;
 
 function showBuddySpeech(message, duration = 3400) {
   const buddy = document.getElementById("plazaBuddy");
@@ -1182,7 +1184,7 @@ function showBuddySpeech(message, duration = 3400) {
 function clearBuddyLifeState() {
   const buddy = document.getElementById("plazaBuddy");
   if (!buddy) return;
-  buddy.classList.remove("is-running", "is-walking", "is-sitting", "is-sniffing", "is-looking", "is-stretching", "is-resting");
+  buddy.classList.remove("is-running", "is-walking", "is-sitting", "is-sniffing", "is-looking", "is-stretching", "is-resting", "is-watching-ducks");
 }
 
 function chooseBuddyWaypoint() {
@@ -1203,21 +1205,127 @@ function positionBuddyAt(waypoint, instant = false) {
   if (instant) requestAnimationFrame(() => buddy.classList.remove("no-transition"));
 }
 
+function currentBuddyPoint() {
+  const buddy = document.getElementById("plazaBuddy");
+  return {
+    x: parseFloat(buddy?.style.left || "82"),
+    y: parseFloat(buddy?.style.top || "56")
+  };
+}
+
+function pondBoundsInPercent() {
+  const world = document.querySelector(".village-world");
+  const pond = document.getElementById("villagePond");
+  if (!world || !pond) return null;
+  const worldRect = world.getBoundingClientRect();
+  const pondRect = pond.getBoundingClientRect();
+  if (!worldRect.width || !worldRect.height) return null;
+
+  // A generous safety bubble keeps Buddy's whole body away from the water and ducks.
+  const paddingX = Math.max(42, pondRect.width * .32);
+  const paddingY = Math.max(34, pondRect.height * .42);
+  return {
+    left: ((pondRect.left - worldRect.left - paddingX) / worldRect.width) * 100,
+    right: ((pondRect.right - worldRect.left + paddingX) / worldRect.width) * 100,
+    top: ((pondRect.top - worldRect.top - paddingY) / worldRect.height) * 100,
+    bottom: ((pondRect.bottom - worldRect.top + paddingY) / worldRect.height) * 100
+  };
+}
+
+function segmentTouchesBox(from, to, box) {
+  if (!box) return false;
+  for (let i = 0; i <= 40; i += 1) {
+    const t = i / 40;
+    const x = from.x + (to.x - from.x) * t;
+    const y = from.y + (to.y - from.y) * t;
+    if (x >= box.left && x <= box.right && y >= box.top && y <= box.bottom) return true;
+  }
+  return false;
+}
+
+function buildBuddyRoute(from, destination) {
+  const pond = pondBoundsInPercent();
+  if (!pond || !segmentTouchesBox(from, destination, pond)) return [destination];
+
+  const margin = 4;
+  const aboveY = Math.max(30, pond.top - margin);
+  const belowY = Math.min(82, pond.bottom + margin);
+  const aboveCost = Math.abs(from.y - aboveY) + Math.abs(destination.y - aboveY);
+  const belowCost = Math.abs(from.y - belowY) + Math.abs(destination.y - belowY);
+  const routeY = aboveCost <= belowCost ? aboveY : belowY;
+  const enteringFromLeft = from.x < (pond.left + pond.right) / 2;
+  const firstX = enteringFromLeft ? pond.left - margin : pond.right + margin;
+  const secondX = destination.x < (pond.left + pond.right) / 2 ? pond.left - margin : pond.right + margin;
+
+  return [
+    { x: Math.max(8, Math.min(92, firstX)), y: routeY, routePoint: true },
+    { x: Math.max(8, Math.min(92, secondX)), y: routeY, routePoint: true },
+    destination
+  ];
+}
+
+function makeDucksScoot() {
+  const pond = document.getElementById("villagePond");
+  if (!pond) return;
+  pond.classList.add("buddy-nearby");
+  setTimeout(() => pond.classList.remove("buddy-nearby"), 4200);
+}
+
 function buddyPauseAt(waypoint) {
   const buddy = document.getElementById("plazaBuddy");
   if (!buddy) return;
   buddyIsTraveling = false;
   clearBuddyLifeState();
 
-  const state = buddyLifeStates[Math.floor(Math.random() * buddyLifeStates.length)];
-  buddy.classList.add(state.className);
+  if (waypoint.watchesDucks) {
+    buddy.classList.add("is-sitting", "is-watching-ducks");
+    makeDucksScoot();
+    showBuddySpeech("Hi, ducks! I am staying right here.", 3200);
+    buddyJourneyTimer = setTimeout(() => {
+      buddy.classList.remove("is-sitting", "is-watching-ducks");
+      sendBuddyExploring();
+    }, 5200);
+    return;
+  }
 
+  const lifeState = buddyLifeStates[Math.floor(Math.random() * buddyLifeStates.length)];
+  buddy.classList.add(lifeState.className);
   if (Math.random() < .42) showBuddySpeech(waypoint.thought, 3000);
 
   buddyJourneyTimer = setTimeout(() => {
-    buddy.classList.remove(state.className);
+    buddy.classList.remove(lifeState.className);
     sendBuddyExploring();
-  }, state.duration + 900 + Math.random() * 2200);
+  }, lifeState.duration + 900 + Math.random() * 2200);
+}
+
+function travelBuddyToNextRoutePoint() {
+  const buddy = document.getElementById("plazaBuddy");
+  if (!buddy) return;
+  const nextPoint = buddyRouteQueue.shift();
+  if (!nextPoint) {
+    buddyPauseAt(buddyFinalWaypoint);
+    return;
+  }
+
+  const from = currentBuddyPoint();
+  const distance = Math.hypot(nextPoint.x - from.x, nextPoint.y - from.y);
+  const isFinalLeg = buddyRouteQueue.length === 0;
+  const running = isFinalLeg && distance > 45 && Math.random() < .18;
+  const travelSeconds = running
+    ? Math.max(2.8, distance / 13)
+    : Math.max(2.2, distance / 8.5);
+
+  clearBuddyLifeState();
+  buddyIsTraveling = true;
+  buddy.classList.add(running ? "is-running" : "is-walking");
+  buddy.style.setProperty("--buddy-travel-time", `${travelSeconds}s`);
+  buddy.classList.toggle("faces-left", nextPoint.x > from.x);
+  positionBuddyAt(nextPoint);
+
+  buddyJourneyTimer = setTimeout(() => {
+    if (buddyRouteQueue.length) travelBuddyToNextRoutePoint();
+    else buddyPauseAt(buddyFinalWaypoint);
+  }, travelSeconds * 1000 + 140);
 }
 
 function sendBuddyExploring() {
@@ -1231,25 +1339,15 @@ function sendBuddyExploring() {
     return;
   }
 
-  clearBuddyLifeState();
-  const waypoint = chooseBuddyWaypoint();
-  const currentX = parseFloat(buddy.style.left || "82");
-  const distance = Math.abs(currentX - waypoint.x);
-  const running = distance > 45 && Math.random() < .36;
-  const travelSeconds = running ? 3.4 + Math.random() * 1.2 : 5.2 + Math.random() * 2.1;
-
-  buddyIsTraveling = true;
-  buddy.classList.add(running ? "is-running" : "is-walking");
-  buddy.style.setProperty("--buddy-travel-time", `${travelSeconds}s`);
-  buddy.classList.toggle("faces-left", waypoint.x > currentX); // Buddy artwork faces left by default; flip only when traveling right.
-  positionBuddyAt(waypoint);
-
-  buddyJourneyTimer = setTimeout(() => buddyPauseAt(waypoint), travelSeconds * 1000 + 120);
+  buddyFinalWaypoint = chooseBuddyWaypoint();
+  buddyRouteQueue = buildBuddyRoute(currentBuddyPoint(), buddyFinalWaypoint);
+  travelBuddyToNextRoutePoint();
 }
 
 function startBuddyVillageLife() {
   const buddy = document.getElementById("plazaBuddy");
   if (!buddy) return;
+  buddyRouteQueue = [];
   positionBuddyAt({ x: 82, y: 56 }, true);
   buddy.classList.remove("is-speaking");
   clearTimeout(buddyJourneyTimer);
@@ -1266,6 +1364,7 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("resize", () => {
   const buddy = document.getElementById("plazaBuddy");
   if (!buddy) return;
+  buddyRouteQueue = [];
   const x = Math.min(88, Math.max(12, parseFloat(buddy.style.left || "82")));
   buddy.style.left = `${x}%`;
 });
